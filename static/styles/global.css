@@ -1,13 +1,13 @@
 /* static/styles/global.css */
 
-/* Reset and base styles */
-* {
+/* Reset and base styles - scoped to prompt pocket elements only */
+#prompt-pocket-container * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
+#prompt-pocket-container {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   font-size: 14px;
   line-height: 1.5;
@@ -17,12 +17,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Utility classes */
-.hidden {
+/* Utility classes - scoped to prompt pocket elements only */
+#prompt-pocket-container .hidden {
   display: none !important;
 }
 
-.visually-hidden {
+#prompt-pocket-container .visually-hidden {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
@@ -34,42 +34,42 @@ body {
   border: 0 !important;
 }
 
-/* Scrollbar styles */
-::-webkit-scrollbar {
+/* Scrollbar styles - scoped to prompt pocket elements only */
+#prompt-pocket-container ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
+#prompt-pocket-container ::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb {
+#prompt-pocket-container ::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+#prompt-pocket-container ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
-/* Focus styles */
-:focus {
+/* Focus styles - scoped to prompt pocket elements only */
+#prompt-pocket-container :focus {
   outline: 2px solid #667eea;
   outline-offset: 2px;
 }
 
-:focus:not(:focus-visible) {
+#prompt-pocket-container :focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Animation classes */
-.fade-in {
+/* Animation classes - scoped to prompt pocket elements only */
+#prompt-pocket-container .fade-in {
   animation: fadeIn 0.3s ease-in;
 }
 
-.slide-in {
+#prompt-pocket-container .slide-in {
   animation: slideIn 0.3s ease-out;
 }
 
