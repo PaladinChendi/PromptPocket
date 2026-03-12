@@ -1,0 +1,67 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Pocket",
+  "version": "1.0.0",
+  "description": "Create, manage, and quickly insert prompt templates for AI assistants",
+  "author": "Your Name",
+
+  "minimum_chrome_version": "88",
+
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+
+  "host_permissions": [
+    "https://chat.openai.com/*",
+    "https://chatgpt.com/*",
+    "https://*.doubao.com/*",
+    "https://gemini.google.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*",
+        "https://*.doubao.com/*",
+        "https://gemini.google.com/*"
+      ],
+      "js": ["contentScript.js"],
+      "css": ["styles/global.css"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Prompt Pocket"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "styles/global.css"
+      ],
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*",
+        "https://*.doubao.com/*",
+        "https://gemini.google.com/*"
+      ]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+
+  "offline_enabled": true,
+
+  "incognito": "split"
+}
