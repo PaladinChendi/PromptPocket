@@ -53,19 +53,17 @@ export function fillContentEditable(element: HTMLElement, text: string): boolean
     console.log('[fillContentEditable] Filling contenteditable, className:', element.className);
     element.focus();
 
-    // Clear existing content
-    element.innerText = '';
-    element.focus();
+    // Insert text at current position
+    document.execCommand('insertText', false, text);
 
-    // Use execCommand to insert text (most compatible)
-    const success = document.execCommand('insertText', false, text);
-
-    if (!success) {
-      console.log('[fillContentEditable] execCommand failed, using innerText');
-      element.innerText = text;
+    // Fallback: if execCommand failed, directly set innerText
+    const finalContent = element.innerText;
+    if (!finalContent.includes(text)) {
+      console.log('[fillContentEditable] execCommand failed, using innerText fallback');
+      element.innerText = (element.innerText || '') + text;
     }
 
-    // Trigger input events
+    // Trigger input events to ensure React framework detects the change
     const inputEvent = new InputEvent('input', {
       bubbles: true,
       cancelable: false,
@@ -73,10 +71,9 @@ export function fillContentEditable(element: HTMLElement, text: string): boolean
       inputType: 'insertText'
     });
     element.dispatchEvent(inputEvent);
-
     element.dispatchEvent(new Event('change', { bubbles: true }));
 
-    console.log('[fillContentEditable] Successfully filled text, innerText:', element.innerText.substring(0, 50));
+    console.log('[fillContentEditable] Successfully appended text, innerText:', element.innerText.substring(0, 50));
     return true;
   } catch (error) {
     console.error('[fillContentEditable] Failed:', error);
@@ -92,6 +89,15 @@ export function fillTextElement(element: HTMLTextAreaElement | HTMLInputElement,
     console.log('[fillTextElement] Filling text into element:', element.tagName, 'className:', element.className);
     element.focus();
 
+    const selectionStart = element.selectionStart ?? element.value.length;
+    const selectionEnd = element.selectionEnd ?? element.value.length;
+    const value = element.value || '';
+
+    // Insert text at current cursor position
+    const before = value.substring(0, selectionStart);
+    const after = value.substring(selectionEnd);
+    const finalText = before + text + after;
+
     // Use native setter to bypass React's event system
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       (element as HTMLTextAreaElement).constructor.prototype,
@@ -99,17 +105,21 @@ export function fillTextElement(element: HTMLTextAreaElement | HTMLInputElement,
     )?.set;
 
     if (nativeInputValueSetter) {
-      nativeInputValueSetter.call(element, text);
+      nativeInputValueSetter.call(element, finalText);
     } else {
-      element.value = text;
+      element.value = finalText;
     }
+
+    // Move cursor after the inserted text
+    const newCursorPos = selectionStart + text.length;
+    element.setSelectionRange(newCursorPos, newCursorPos);
 
     // Trigger proper events
     element.dispatchEvent(new Event('focus', { bubbles: true }));
     element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
 
-    console.log('[fillTextElement] Successfully filled text, value:', element.value.substring(0, 50));
+    console.log('[fillTextElement] Successfully appended text, value:', element.value.substring(0, 50));
     return true;
   } catch (error) {
     console.error('[fillTextElement] Failed:', error);
