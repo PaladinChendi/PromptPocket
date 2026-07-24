@@ -43,7 +43,7 @@ const Popup: React.FC = () => {
       setCategories((categoriesResponse as { categories?: Record<string, Category> }).categories || {});
       setSettings((settingsResponse as { settings?: ExtensionSettings }).settings ?? null);
     } catch (error) {
-      console.error('Failed to load data:', error);
+      DEBUG && console.error('Failed to load data:', error);
       setError(error instanceof Error ? error.message : 'Failed to load data');
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ const Popup: React.FC = () => {
   const handleSavePrompt = async (prompt: Omit<PromptTemplate, 'id' | 'createdAt' | 'updatedAt' | 'usageCount'>, id?: string) => {
     try {
       const response = await sendMessage(MessageBuilder.savePrompt(prompt, id));
-      console.log('Save prompt response:', response);
+      DEBUG && console.log('Save prompt response:', response);
 
       if ((response as { success: boolean }).success) {
         await loadData(); // Refresh data
@@ -63,7 +63,7 @@ const Popup: React.FC = () => {
         alert('Failed to save prompt. The server returned an error.');
       }
     } catch (error) {
-      console.error('Failed to save prompt:', error);
+      DEBUG && console.error('Failed to save prompt:', error);
       alert('Failed to save prompt: ' + (error instanceof Error ? error.message : 'Unknown error'));
       throw error;
     }
@@ -79,7 +79,7 @@ const Popup: React.FC = () => {
         await loadData();
       }
     } catch (error) {
-      console.error('Failed to delete prompt:', error);
+      DEBUG && console.error('Failed to delete prompt:', error);
       alert('Failed to delete prompt');
     }
   };
@@ -106,7 +106,7 @@ const Popup: React.FC = () => {
         alert('Failed to execute prompt. Make sure you are on a supported AI page.');
       }
     } catch (error) {
-      console.error('Failed to execute prompt:', error);
+      DEBUG && console.error('Failed to execute prompt:', error);
       alert('Failed to execute prompt');
     }
   };
@@ -116,7 +116,7 @@ const Popup: React.FC = () => {
       await sendMessage(MessageBuilder.updateSettings(newSettings));
       await loadData(); // Refresh settings
     } catch (error) {
-      console.error('Failed to update settings:', error);
+      DEBUG && console.error('Failed to update settings:', error);
       throw error;
     }
   };
@@ -136,7 +136,7 @@ const Popup: React.FC = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to export data:', error);
+      DEBUG && console.error('Failed to export data:', error);
       alert('Failed to export data');
     }
   };
@@ -160,7 +160,7 @@ const Popup: React.FC = () => {
         alert('Failed to import data. Please check the file format.');
       }
     } catch (error) {
-      console.error('Failed to import data:', error);
+      DEBUG && console.error('Failed to import data:', error);
       alert('Failed to import data');
     }
 

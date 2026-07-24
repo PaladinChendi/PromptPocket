@@ -46,9 +46,9 @@ class ContentScript {
       this.startMonitoring();
 
       this.isInitialized = true;
-      console.log('[Prompt Pocket] Content script initialized, supported platforms:', getSupportedPlatforms());
+      DEBUG && console.log('[Prompt Pocket] Content script initialized, supported platforms:', getSupportedPlatforms());
     } catch (error) {
-      console.error('[Prompt Pocket] Failed to initialize content script:', error);
+      DEBUG && console.error('[Prompt Pocket] Failed to initialize content script:', error);
       throw error;
     }
   }
@@ -61,7 +61,7 @@ class ContentScript {
 
     // Clean up old detector if platform changed
     if (this.detector && newDetector && this.detector.getPlatformName() !== newDetector.getPlatformName()) {
-      console.log('[Prompt Pocket] Platform changed, cleaning up old detector');
+      DEBUG && console.log('[Prompt Pocket] Platform changed, cleaning up old detector');
       this.detector.cleanup();
       if (this.uiInjector) {
         this.uiInjector.cleanup();
@@ -72,7 +72,7 @@ class ContentScript {
     this.detector = newDetector;
 
     if (this.detector) {
-      console.log('[Prompt Pocket] Detected platform:', this.detector.getPlatformName());
+      DEBUG && console.log('[Prompt Pocket] Detected platform:', this.detector.getPlatformName());
       this.detector.initialize();
 
       // Initialize UI injector with the new detector
@@ -81,7 +81,7 @@ class ContentScript {
         this.uiInjector.initialize();
       }
     } else {
-      console.log('[Prompt Pocket] No supported platform detected');
+      DEBUG && console.log('[Prompt Pocket] No supported platform detected');
       if (this.uiInjector) {
         this.uiInjector.cleanup();
         this.uiInjector = null;
@@ -97,7 +97,7 @@ class ContentScript {
       this.handleMessage(message, sender)
         .then(response => sendResponse(response))
         .catch(error => {
-          console.error('[Prompt Pocket] Message handling error:', error);
+          DEBUG && console.error('[Prompt Pocket] Message handling error:', error);
           sendResponse({ success: false, error: error.message });
         });
 
@@ -115,7 +115,7 @@ class ContentScript {
       const activePlatform = this.detector?.getPlatformName() || null;
 
       if (currentPlatform !== activePlatform) {
-        console.log('[Prompt Pocket] Platform change detected, re-detecting...');
+        DEBUG && console.log('[Prompt Pocket] Platform change detected, re-detecting...');
         this.detectPlatform();
       }
     }, 3000);
@@ -125,7 +125,7 @@ class ContentScript {
    * Handle incoming messages
    */
   private async handleMessage(message: any, sender: chrome.runtime.MessageSender) {
-    console.log('[Prompt Pocket] Received message:', message.type, message.payload);
+    DEBUG && console.log('[Prompt Pocket] Received message:', message.type, message.payload);
 
     // Check if we have a detector
     if (!this.detector) {
@@ -137,7 +137,7 @@ class ContentScript {
 
     switch (message.type) {
       case 'PING': {
-        console.log('[Prompt Pocket] PING received');
+        DEBUG && console.log('[Prompt Pocket] PING received');
         return {
           success: true,
           message: 'Content script is running',
@@ -148,7 +148,7 @@ class ContentScript {
       case 'FILL_PROMPT': {
         const { content, autoSubmit, id } = message.payload;
 
-        console.log('[Prompt Pocket] FILL_PROMPT received:', {
+        DEBUG && console.log('[Prompt Pocket] FILL_PROMPT received:', {
           contentLength: content?.length,
           autoSubmit,
           id,
@@ -158,7 +158,7 @@ class ContentScript {
         try {
           const success = this.detector.fillInput(content, autoSubmit);
 
-          console.log('[Prompt Pocket] fillInput result:', success);
+          DEBUG && console.log('[Prompt Pocket] fillInput result:', success);
 
           if (success && id) {
             await sendMessage(MessageBuilder.incrementUsage(id));
@@ -170,7 +170,7 @@ class ContentScript {
             platform: this.detector.getPlatformName()
           };
         } catch (error) {
-          console.error('[Prompt Pocket] Failed to fill prompt:', error);
+          DEBUG && console.error('[Prompt Pocket] Failed to fill prompt:', error);
           return {
             success: false,
             error: error instanceof Error ? error.message : 'Unknown error'
@@ -209,7 +209,7 @@ class ContentScript {
             platform: this.detector.getPlatformName()
           };
         } catch (error) {
-          console.error('[Prompt Pocket] Failed to execute prompt:', error);
+          DEBUG && console.error('[Prompt Pocket] Failed to execute prompt:', error);
           return {
             success: false,
             error: error instanceof Error ? error.message : 'Unknown error'
@@ -222,7 +222,7 @@ class ContentScript {
           const response = await sendMessage(MessageBuilder.getPrompts());
           return { ...response, platform: this.detector.getPlatformName() };
         } catch (error) {
-          console.error('[Prompt Pocket] Failed to get prompts:', error);
+          DEBUG && console.error('[Prompt Pocket] Failed to get prompts:', error);
           return { prompts: {}, success: false };
         }
       }
@@ -232,7 +232,7 @@ class ContentScript {
           const response = await sendMessage(MessageBuilder.getSettings());
           return { ...response, platform: this.detector.getPlatformName() };
         } catch (error) {
-          console.error('[Prompt Pocket] Failed to get settings:', error);
+          DEBUG && console.error('[Prompt Pocket] Failed to get settings:', error);
           return { settings: {}, success: false };
         }
       }
@@ -247,7 +247,7 @@ class ContentScript {
       }
 
       default:
-        console.log('[Prompt Pocket] Unknown message type:', message.type);
+        DEBUG && console.log('[Prompt Pocket] Unknown message type:', message.type);
         return { success: false, error: 'Unknown message type' };
     }
   }
@@ -283,7 +283,7 @@ class ContentScript {
       const response = await sendMessage(MessageBuilder.executePrompt(promptId, variables));
       return (response as { success: boolean }).success;
     } catch (error) {
-      console.error('[Prompt Pocket] Failed to execute prompt:', error);
+      DEBUG && console.error('[Prompt Pocket] Failed to execute prompt:', error);
       return false;
     }
   }
@@ -314,17 +314,17 @@ const contentScript = new ContentScript();
 // Handle page visibility changes
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
-    contentScript.initialize().catch(console.error);
+    contentScript.initialize().catch((err) => DEBUG && console.error(err));
   }
 });
 
 // Initialize on load
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    contentScript.initialize().catch(console.error);
+    contentScript.initialize().catch((err) => DEBUG && console.error(err));
   });
 } else {
-  contentScript.initialize().catch(console.error);
+  contentScript.initialize().catch((err) => DEBUG && console.error(err));
 }
 
 // Cleanup on page unload

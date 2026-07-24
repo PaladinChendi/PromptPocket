@@ -58,7 +58,7 @@ export class ChatGPTDetector implements PlatformDetector {
   public initialize(): void {
     this.detectInitialState();
     this.startMonitoring();
-    console.log('[ChatGPT Detector] Initialized');
+    DEBUG && console.log('[ChatGPT Detector] Initialized');
   }
 
   public matches(): boolean {
@@ -92,15 +92,15 @@ export class ChatGPTDetector implements PlatformDetector {
   }
 
   public fillInput(text: string, autoSubmit = false): boolean {
-    console.log('[ChatGPT Detector] fillInput called, text length:', text.length);
+    DEBUG && console.log('[ChatGPT Detector] fillInput called, text length:', text.length);
 
     if (!this.inputElement) {
-      console.warn('[ChatGPT Detector] No input element found, re-detecting...');
+      DEBUG && console.warn('[ChatGPT Detector] No input element found, re-detecting...');
       this.findInput();
     }
 
     if (!this.inputElement) {
-      console.error('[ChatGPT Detector] Still no input element found!');
+      DEBUG && console.error('[ChatGPT Detector] Still no input element found!');
       return false;
     }
 
@@ -108,10 +108,10 @@ export class ChatGPTDetector implements PlatformDetector {
       let success = false;
 
       if (this.inputType === 'contenteditable') {
-        console.log('[ChatGPT Detector] Filling contenteditable');
+        DEBUG && console.log('[ChatGPT Detector] Filling contenteditable');
         success = fillContentEditable(this.inputElement, text);
       } else if (this.inputType === 'textarea' || this.inputType === 'input') {
-        console.log('[ChatGPT Detector] Filling text element:', this.inputType);
+        DEBUG && console.log('[ChatGPT Detector] Filling text element:', this.inputType);
         success = fillTextElement(this.inputElement as HTMLTextAreaElement | HTMLInputElement, text);
       }
 
@@ -121,7 +121,7 @@ export class ChatGPTDetector implements PlatformDetector {
 
       return success;
     } catch (error) {
-      console.error('[ChatGPT Detector] fillInput failed:', error);
+      DEBUG && console.error('[ChatGPT Detector] fillInput failed:', error);
       return false;
     }
   }
@@ -165,14 +165,14 @@ export class ChatGPTDetector implements PlatformDetector {
       this.inputElement = result.element;
       this.inputType = result.type;
       if (elementChanged) {
-        console.log('[ChatGPT Detector] Found input element:', {
+        DEBUG && console.log('[ChatGPT Detector] Found input element:', {
           type: this.inputType,
           className: this.inputElement.className
         });
       }
     } else if (this.inputElement) {
       // Only warn if we had an element but lost it
-      console.warn('[ChatGPT Detector] Lost input element');
+      DEBUG && console.warn('[ChatGPT Detector] Lost input element');
       this.inputElement = null;
       this.inputType = null;
     }
@@ -201,12 +201,12 @@ export class ChatGPTDetector implements PlatformDetector {
 
   private submit(): boolean {
     if (clickSubmitButton(this.config.submitSelectors)) {
-      console.log('[ChatGPT Detector] Submit via button click');
+      DEBUG && console.log('[ChatGPT Detector] Submit via button click');
       return true;
     }
 
     if (this.inputElement && submitViaEnter(this.inputElement)) {
-      console.log('[ChatGPT Detector] Submit via Enter key');
+      DEBUG && console.log('[ChatGPT Detector] Submit via Enter key');
       return true;
     }
 

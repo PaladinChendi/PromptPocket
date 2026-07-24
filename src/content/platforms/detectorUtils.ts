@@ -50,7 +50,7 @@ export function findInputElement(selectors: string[]): InputElementResult | null
  */
 export function fillContentEditable(element: HTMLElement, text: string): boolean {
   try {
-    console.log('[fillContentEditable] Filling contenteditable, className:', element.className);
+    DEBUG && console.log('[fillContentEditable] Filling contenteditable, className:', element.className);
     element.focus();
 
     // Insert text at current position
@@ -59,7 +59,7 @@ export function fillContentEditable(element: HTMLElement, text: string): boolean
     // Fallback: if execCommand failed, directly set innerText
     const finalContent = element.innerText;
     if (!finalContent.includes(text)) {
-      console.log('[fillContentEditable] execCommand failed, using innerText fallback');
+      DEBUG && console.log('[fillContentEditable] execCommand failed, using innerText fallback');
       element.innerText = (element.innerText || '') + text;
     }
 
@@ -73,10 +73,10 @@ export function fillContentEditable(element: HTMLElement, text: string): boolean
     element.dispatchEvent(inputEvent);
     element.dispatchEvent(new Event('change', { bubbles: true }));
 
-    console.log('[fillContentEditable] Successfully appended text, innerText:', element.innerText.substring(0, 50));
+    DEBUG && console.log('[fillContentEditable] Successfully appended text, innerText:', element.innerText.substring(0, 50));
     return true;
   } catch (error) {
-    console.error('[fillContentEditable] Failed:', error);
+    DEBUG && console.error('[fillContentEditable] Failed:', error);
     return false;
   }
 }
@@ -86,7 +86,7 @@ export function fillContentEditable(element: HTMLElement, text: string): boolean
  */
 export function fillTextElement(element: HTMLTextAreaElement | HTMLInputElement, text: string): boolean {
   try {
-    console.log('[fillTextElement] Filling text into element:', element.tagName, 'className:', element.className);
+    DEBUG && console.log('[fillTextElement] Filling text into element:', element.tagName, 'className:', element.className);
     element.focus();
 
     const selectionStart = element.selectionStart ?? element.value.length;
@@ -119,10 +119,10 @@ export function fillTextElement(element: HTMLTextAreaElement | HTMLInputElement,
     element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
 
-    console.log('[fillTextElement] Successfully appended text, value:', element.value.substring(0, 50));
+    DEBUG && console.log('[fillTextElement] Successfully appended text, value:', element.value.substring(0, 50));
     return true;
   } catch (error) {
-    console.error('[fillTextElement] Failed:', error);
+    DEBUG && console.error('[fillTextElement] Failed:', error);
     return false;
   }
 }
@@ -141,8 +141,8 @@ export function matchesDomain(domains: string[]): boolean {
 
   // Only log first time to avoid spam
   if (!domainLogged) {
-    console.log(`[matchesDomain] Checking hostname "${hostname}" against domains:`, domains);
-    console.log(`[matchesDomain] Result:`, matches);
+    DEBUG && console.log(`[matchesDomain] Checking hostname "${hostname}" against domains:`, domains);
+    DEBUG && console.log(`[matchesDomain] Result:`, matches);
     domainLogged = true;
   }
 

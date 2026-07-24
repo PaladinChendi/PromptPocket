@@ -72,7 +72,7 @@ export class StorageManager {
       const migratedData = await migrationManager.migrate(result.storageData);
       return migratedData;
     } catch (error) {
-      console.error('Migration failed, returning default data:', error);
+      DEBUG && console.error('Migration failed, returning default data:', error);
       return DEFAULT_STORAGE_DATA;
     }
   }
@@ -240,7 +240,7 @@ export class StorageManager {
         importedCount: promptCount + categoryCount
       };
     } catch (error) {
-      console.error('Import failed:', error);
+      DEBUG && console.error('Import failed:', error);
       return { success: false, importedCount: 0 };
     }
   }

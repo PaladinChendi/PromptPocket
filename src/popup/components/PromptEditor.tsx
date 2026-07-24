@@ -99,7 +99,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 
       await onSave(promptData, prompt?.id);
     } catch (error) {
-      console.error('Failed to save prompt:', error);
+      DEBUG && console.error('Failed to save prompt:', error);
       alert('Failed to save prompt. Please try again.');
     } finally {
       setIsSaving(false);

@@ -36,10 +36,10 @@ class BackgroundService {
       // Then initialize storage
       await this.storageManager.initialize();
 
-      console.log('ChatGPT Prompt Assistant background service initialized');
+      DEBUG && console.log('ChatGPT Prompt Assistant background service initialized');
       this.isInitialized = true;
     } catch (error) {
-      console.error('Failed to initialize background service:', error);
+      DEBUG && console.error('Failed to initialize background service:', error);
       throw error;
     }
   }
@@ -53,7 +53,7 @@ class BackgroundService {
       this.handleMessage(message, sender)
         .then(response => sendResponse(response))
         .catch(error => {
-          console.error('Message handling error:', error);
+          DEBUG && console.error('Message handling error:', error);
           sendResponse({ success: false, error: error.message });
         });
 
@@ -68,7 +68,7 @@ class BackgroundService {
   private setupLifecycleHandlers(): void {
     // Handle extension installation
     chrome.runtime.onInstalled.addListener(async (details) => {
-      console.log('Extension installed/updated:', details.reason);
+      DEBUG && console.log('Extension installed/updated:', details.reason);
 
       if (details.reason === 'install') {
         await this.onExtensionInstall();
@@ -79,7 +79,7 @@ class BackgroundService {
 
     // Handle extension startup
     chrome.runtime.onStartup.addListener(() => {
-      console.log('Extension started');
+      DEBUG && console.log('Extension started');
     });
   }
 
@@ -117,7 +117,7 @@ class BackgroundService {
    * Handle extension update
    */
   private async onExtensionUpdate(previousVersion?: string): Promise<void> {
-    console.log(`Updated from version ${previousVersion || 'unknown'}`);
+    DEBUG && console.log(`Updated from version ${previousVersion || 'unknown'}`);
     // Any update-specific logic goes here
   }
 
@@ -128,7 +128,7 @@ class BackgroundService {
     message: Message,
     sender: chrome.runtime.MessageSender
   ): Promise<MessageResponse> {
-    console.log('Background received message:', message.type, message.payload);
+    DEBUG && console.log('Background received message:', message.type, message.payload);
 
     switch (message.type) {
       case 'GET_PROMPTS': {
@@ -138,7 +138,7 @@ class BackgroundService {
 
       case 'SAVE_PROMPT': {
         const { prompt, id } = message.payload!;
-        console.log('Saving prompt:', prompt.title);
+        DEBUG && console.log('Saving prompt:', prompt.title);
         const promptId = await this.storageManager.savePrompt(prompt, id);
         return { id: promptId, success: true } as MessageResponse;
       }
@@ -170,7 +170,7 @@ class BackgroundService {
         // Forward EXECUTE_PROMPT to the active tab's content script
         const { id, variables } = message.payload!;
 
-        console.log('EXECUTE_PROMPT received:', { id, variables });
+        DEBUG && console.log('EXECUTE_PROMPT received:', { id, variables });
 
         // Get the prompt data to validate it exists
         const prompt = await this.storageManager.getPrompt(id);
@@ -187,7 +187,7 @@ class BackgroundService {
           }
         }
 
-        console.log('Processed content:', { length: filledContent.length, autoSubmit: prompt.autoSubmit });
+        DEBUG && console.log('Processed content:', { length: filledContent.length, autoSubmit: prompt.autoSubmit });
 
         // Forward to content script on active tab with processed content
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -198,7 +198,7 @@ class BackgroundService {
         const activeTab = tabs[0];
         const tabId = activeTab.id!; // Safe to use non-null assertion after the check
 
-        console.log('Active tab:', { id: tabId, url: activeTab.url });
+        DEBUG && console.log('Active tab:', { id: tabId, url: activeTab.url });
 
         // Check if tab is a supported AI page
         const isSupportedPage = activeTab.url &&
@@ -215,14 +215,14 @@ class BackgroundService {
         try {
           // First, ping the content script to make sure it's running
           try {
-            console.log('Pinging content script...');
+            DEBUG && console.log('Pinging content script...');
             const pingResponse = await chrome.tabs.sendMessage(tabId, {
               type: 'PING',
               payload: {}
             });
-            console.log('Ping response:', pingResponse);
+            DEBUG && console.log('Ping response:', pingResponse);
           } catch (pingError) {
-            console.error('Content script ping failed:', pingError);
+            DEBUG && console.error('Content script ping failed:', pingError);
             throw new Error('Content script is not responding. Please refresh the page and try again.');
           }
 
@@ -235,12 +235,12 @@ class BackgroundService {
               id: id  // Include ID for usage tracking
             }
           };
-          console.log('Sending FILL_PROMPT to content script...');
+          DEBUG && console.log('Sending FILL_PROMPT to content script...');
           const response = await chrome.tabs.sendMessage(tabId, executionMessage) as MessageResponse;
-          console.log('FILL_PROMPT response:', response);
+          DEBUG && console.log('FILL_PROMPT response:', response);
           return response;
         } catch (error: any) {
-          console.error('Failed to send to content script:', error);
+          DEBUG && console.error('Failed to send to content script:', error);
           const errorMessage = error?.message || String(error);
           throw new Error(`Failed to execute prompt: ${errorMessage}`);
         }
@@ -300,7 +300,7 @@ class BackgroundService {
       const response = await chrome.tabs.sendMessage(targetTabId, message);
       return response as MessageResponse;
     } catch (error) {
-      console.error('Failed to send message to content script:', error);
+      DEBUG && console.error('Failed to send message to content script:', error);
       return null;
     }
   }
@@ -323,7 +323,7 @@ class BackgroundService {
 
 // Initialize the service when background script loads
 const backgroundService = new BackgroundService();
-backgroundService.initialize().catch(console.error);
+backgroundService.initialize().catch((err) => DEBUG && console.error(err));
 
 // Export for testing or other modules
 export default backgroundService;

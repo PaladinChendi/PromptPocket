@@ -74,11 +74,11 @@ export class MigrationManager {
     // Apply migrations sequentially
     for (const migration of applicableMigrations) {
       try {
-        console.log(`Applying migration ${migration.version}: ${migration.description}`);
+        DEBUG && console.log(`Applying migration ${migration.version}: ${migration.description}`);
         currentData = await migration.migrate(currentData);
         currentData.version = migration.version;
       } catch (error) {
-        console.error(`Failed to apply migration ${migration.version}:`, error);
+        DEBUG && console.error(`Failed to apply migration ${migration.version}:`, error);
         throw error;
       }
     }
@@ -92,7 +92,7 @@ export class MigrationManager {
   private validateAndReturnData(data: any): StorageData {
     // Basic validation
     if (!data || typeof data !== 'object') {
-      console.warn('Invalid data after migration, returning defaults');
+      DEBUG && console.warn('Invalid data after migration, returning defaults');
       return DEFAULT_STORAGE_DATA;
     }
 

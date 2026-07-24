@@ -42,7 +42,7 @@ export class UIInjector {
       this.onPlatformStateChange(state);
     });
 
-    console.log('[UI Injector] Initialized for platform:', this.detector.getPlatformName());
+    DEBUG && console.log('[UI Injector] Initialized for platform:', this.detector.getPlatformName());
   }
 
   /**
@@ -438,7 +438,7 @@ export class UIInjector {
     // Create backdrop
     this.createBackdrop();
 
-    console.log('[UI Injector] Prompt panel opened');
+    DEBUG && console.log('[UI Injector] Prompt panel opened');
   }
 
   /**
@@ -455,7 +455,7 @@ export class UIInjector {
 
     this.removeBackdrop();
 
-    console.log('[UI Injector] Prompt panel closed');
+    DEBUG && console.log('[UI Injector] Prompt panel closed');
   }
 
   /**
@@ -579,7 +579,7 @@ export class UIInjector {
         content.appendChild(promptList);
       }
     } catch (error) {
-      console.error('[UI Injector] Failed to load prompts:', error);
+      DEBUG && console.error('[UI Injector] Failed to load prompts:', error);
       content.innerHTML = '';
       const errorState = createElement('div', {
         className: 'empty-state',
@@ -629,7 +629,7 @@ export class UIInjector {
         alert('Failed to execute prompt: ' + reason);
       }
     } catch (error) {
-      console.error('[UI Injector] Failed to execute prompt:', error);
+      DEBUG && console.error('[UI Injector] Failed to execute prompt:', error);
       alert('Failed to execute prompt: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   }
@@ -664,7 +664,7 @@ export class UIInjector {
     const isVisible = this.container.style.display !== 'none';
     this.container.style.display = isVisible ? 'none' : '';
 
-    console.log(`[UI Injector] UI ${isVisible ? 'hidden' : 'shown'}`);
+    DEBUG && console.log(`[UI Injector] UI ${isVisible ? 'hidden' : 'shown'}`);
   }
 
   /**

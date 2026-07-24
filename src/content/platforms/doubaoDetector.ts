@@ -86,7 +86,7 @@ export class DoubaoDetector implements PlatformDetector {
   public initialize(): void {
     this.detectInitialState();
     this.startMonitoring();
-    console.log('[Doubao Detector] Initialized');
+    DEBUG && console.log('[Doubao Detector] Initialized');
   }
 
   public matches(): boolean {
@@ -121,15 +121,15 @@ export class DoubaoDetector implements PlatformDetector {
   }
 
   public fillInput(text: string, autoSubmit = false): boolean {
-    console.log('[Doubao Detector] fillInput called, text length:', text.length);
+    DEBUG && console.log('[Doubao Detector] fillInput called, text length:', text.length);
 
     if (!this.inputElement) {
-      console.warn('[Doubao Detector] No input element found, re-detecting...');
+      DEBUG && console.warn('[Doubao Detector] No input element found, re-detecting...');
       this.findInput();
     }
 
     if (!this.inputElement) {
-      console.error('[Doubao Detector] Still no input element found!');
+      DEBUG && console.error('[Doubao Detector] Still no input element found!');
       return false;
     }
 
@@ -137,10 +137,10 @@ export class DoubaoDetector implements PlatformDetector {
       let success = false;
 
       if (this.inputType === 'contenteditable') {
-        console.log('[Doubao Detector] Filling contenteditable');
+        DEBUG && console.log('[Doubao Detector] Filling contenteditable');
         success = fillContentEditable(this.inputElement, text);
       } else if (this.inputType === 'textarea' || this.inputType === 'input') {
-        console.log('[Doubao Detector] Filling text element:', this.inputType);
+        DEBUG && console.log('[Doubao Detector] Filling text element:', this.inputType);
         success = fillTextElement(this.inputElement as HTMLTextAreaElement | HTMLInputElement, text);
       }
 
@@ -150,7 +150,7 @@ export class DoubaoDetector implements PlatformDetector {
 
       return success;
     } catch (error) {
-      console.error('[Doubao Detector] fillInput failed:', error);
+      DEBUG && console.error('[Doubao Detector] fillInput failed:', error);
       return false;
     }
   }
@@ -194,7 +194,7 @@ export class DoubaoDetector implements PlatformDetector {
       this.inputElement = result.element;
       this.inputType = result.type;
       if (elementChanged) {
-        console.log('[Doubao Detector] Found input element:', {
+        DEBUG && console.log('[Doubao Detector] Found input element:', {
           type: this.inputType,
           tagName: this.inputElement.tagName,
           className: this.inputElement.className,
@@ -203,7 +203,7 @@ export class DoubaoDetector implements PlatformDetector {
       }
     } else if (this.inputElement) {
       // Only warn if we had an element but lost it
-      console.warn('[Doubao Detector] Lost input element');
+      DEBUG && console.warn('[Doubao Detector] Lost input element');
       this.inputElement = null;
       this.inputType = null;
     }
@@ -230,12 +230,12 @@ export class DoubaoDetector implements PlatformDetector {
 
   private submit(): boolean {
     if (clickSubmitButton(this.config.submitSelectors)) {
-      console.log('[Doubao Detector] Submit via button click');
+      DEBUG && console.log('[Doubao Detector] Submit via button click');
       return true;
     }
 
     if (this.inputElement && submitViaEnter(this.inputElement)) {
-      console.log('[Doubao Detector] Submit via Enter key');
+      DEBUG && console.log('[Doubao Detector] Submit via Enter key');
       return true;
     }
 

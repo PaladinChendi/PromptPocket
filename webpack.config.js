@@ -1,9 +1,16 @@
 const path = require('path');
+const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = {
+// Function form so the config can read build flags from `env`.
+//
+// DEBUG: a compile-time log switch. `webpack --env debug` sets DEBUG to the
+// literal `true`; otherwise `false`. Source code uses `DEBUG && console.log(...)`;
+// when DEBUG is `false`, Terser folds `false && ...` to dead code and removes the
+// call entirely, so the shipped build emits no console output.
+module.exports = (env, argv) => ({
   entry: {
     background: './src/background/background.ts',
     contentScript: './src/content/contentScript.ts',
@@ -34,6 +41,9 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js']
   },
   plugins: [
+    new webpack.DefinePlugin({
+      DEBUG: JSON.stringify(!!env.debug)
+    }),
     new CopyPlugin({
       patterns: [
         {
@@ -53,4 +63,4 @@ module.exports = {
   optimization: {
     minimize: true
   }
-};
+});

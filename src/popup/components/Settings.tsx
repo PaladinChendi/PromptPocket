@@ -23,7 +23,7 @@ const Settings: React.FC<SettingsProps> = ({
     try {
       await onUpdate({ [key]: value });
     } catch (error) {
-      console.error('Failed to update setting:', error);
+      DEBUG && console.error('Failed to update setting:', error);
     } finally {
       setIsSaving(false);
     }
@@ -34,7 +34,7 @@ const Settings: React.FC<SettingsProps> = ({
     try {
       await onUpdate({ [key]: value });
     } catch (error) {
-      console.error('Failed to update setting:', error);
+      DEBUG && console.error('Failed to update setting:', error);
     } finally {
       setIsSaving(false);
     }
@@ -47,7 +47,7 @@ const Settings: React.FC<SettingsProps> = ({
       try {
         await onUpdate({ [key]: numValue });
       } catch (error) {
-        console.error('Failed to update setting:', error);
+        DEBUG && console.error('Failed to update setting:', error);
       } finally {
         setIsSaving(false);
       }

@@ -70,7 +70,7 @@ export class GeminiDetector implements PlatformDetector {
   public initialize(): void {
     this.detectInitialState();
     this.startMonitoring();
-    console.log('[Gemini Detector] Initialized');
+    DEBUG && console.log('[Gemini Detector] Initialized');
   }
 
   public matches(): boolean {
@@ -104,15 +104,15 @@ export class GeminiDetector implements PlatformDetector {
   }
 
   public fillInput(text: string, autoSubmit = false): boolean {
-    console.log('[Gemini Detector] fillInput called, text length:', text.length);
+    DEBUG && console.log('[Gemini Detector] fillInput called, text length:', text.length);
 
     if (!this.inputElement) {
-      console.warn('[Gemini Detector] No input element found, re-detecting...');
+      DEBUG && console.warn('[Gemini Detector] No input element found, re-detecting...');
       this.findInput();
     }
 
     if (!this.inputElement) {
-      console.error('[Gemini Detector] Still no input element found!');
+      DEBUG && console.error('[Gemini Detector] Still no input element found!');
       return false;
     }
 
@@ -120,10 +120,10 @@ export class GeminiDetector implements PlatformDetector {
       let success = false;
 
       if (this.inputType === 'contenteditable') {
-        console.log('[Gemini Detector] Filling contenteditable');
+        DEBUG && console.log('[Gemini Detector] Filling contenteditable');
         success = fillContentEditable(this.inputElement, text);
       } else if (this.inputType === 'textarea' || this.inputType === 'input') {
-        console.log('[Gemini Detector] Filling text element:', this.inputType);
+        DEBUG && console.log('[Gemini Detector] Filling text element:', this.inputType);
         success = fillTextElement(this.inputElement as HTMLTextAreaElement | HTMLInputElement, text);
       }
 
@@ -133,7 +133,7 @@ export class GeminiDetector implements PlatformDetector {
 
       return success;
     } catch (error) {
-      console.error('[Gemini Detector] fillInput failed:', error);
+      DEBUG && console.error('[Gemini Detector] fillInput failed:', error);
       return false;
     }
   }
@@ -177,14 +177,14 @@ export class GeminiDetector implements PlatformDetector {
       this.inputElement = result.element;
       this.inputType = result.type;
       if (elementChanged) {
-        console.log('[Gemini Detector] Found input element:', {
+        DEBUG && console.log('[Gemini Detector] Found input element:', {
           type: this.inputType,
           className: this.inputElement.className
         });
       }
     } else if (this.inputElement) {
       // Only warn if we had an element but lost it
-      console.warn('[Gemini Detector] Lost input element');
+      DEBUG && console.warn('[Gemini Detector] Lost input element');
       this.inputElement = null;
       this.inputType = null;
     }
@@ -210,12 +210,12 @@ export class GeminiDetector implements PlatformDetector {
 
   private submit(): boolean {
     if (clickSubmitButton(this.config.submitSelectors)) {
-      console.log('[Gemini Detector] Submit via button click');
+      DEBUG && console.log('[Gemini Detector] Submit via button click');
       return true;
     }
 
     if (this.inputElement && submitViaEnter(this.inputElement)) {
-      console.log('[Gemini Detector] Submit via Enter key');
+      DEBUG && console.log('[Gemini Detector] Submit via Enter key');
       return true;
     }
 

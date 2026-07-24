@@ -42,7 +42,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
       // Refresh data
       onUpdate();
     } catch (error) {
-      console.error('Failed to create category:', error);
+      DEBUG && console.error('Failed to create category:', error);
       alert('Failed to create category');
     } finally {
       setIsSaving(false);
@@ -64,7 +64,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
       setEditingCategory(null);
       onUpdate();
     } catch (error) {
-      console.error('Failed to update category:', error);
+      DEBUG && console.error('Failed to update category:', error);
       alert('Failed to update category');
     } finally {
       setIsSaving(false);
@@ -91,7 +91,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
         await sendMessage(MessageBuilder.deleteCategory(id));
         onUpdate();
       } catch (error) {
-        console.error('Failed to delete category:', error);
+        DEBUG && console.error('Failed to delete category:', error);
         alert('Failed to delete category');
       }
     }

@@ -37,7 +37,7 @@ export class DetectorFactory {
     for (const detector of this.detectors) {
       if (detector.matches()) {
         if (this.activeDetector !== detector) {
-          console.log(`[Detector Factory] Detected platform: ${detector.getPlatformName()}`);
+          DEBUG && console.log(`[Detector Factory] Detected platform: ${detector.getPlatformName()}`);
           this.activeDetector = detector;
         }
         return this.activeDetector;
@@ -45,7 +45,7 @@ export class DetectorFactory {
     }
 
     if (this.activeDetector !== null && this.activeDetector !== oldDetector) {
-      console.log(`[Detector Factory] No matching detector found`);
+      DEBUG && console.log(`[Detector Factory] No matching detector found`);
     }
     this.activeDetector = null;
     return null;

@@ -9,7 +9,9 @@
     "build": "npm run build:icons && npm run build:ts && npm run build:webpack",
     "build:ts": "tsc",
     "build:webpack": "webpack --mode=production",
+    "build:debug": "webpack --mode=production --env debug",
     "dev": "webpack --mode=development --watch",
+    "dev:debug": "webpack --mode=development --watch --env debug",
     "lint": "eslint src/**/*.{ts,tsx}",
     "type-check": "tsc --noEmit",
     "package": "npm run build && cd dist && zip -r ../promptpocket.zip ."
