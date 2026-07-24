@@ -394,15 +394,12 @@ export class UIInjector {
   }
 
   /**
-   * Position floating button based on settings
+   * Position floating button at the bottom-right corner
    */
   private positionButton(): void {
     if (!this.floatingButton) return;
-
-    // TODO: Get position from settings
-    const position = UI.POSITIONS['bottom-right'];
-
-    Object.assign(this.floatingButton.style, position);
+    this.floatingButton.style.bottom = '20px';
+    this.floatingButton.style.right = '20px';
   }
 
   /**
@@ -628,7 +625,8 @@ export class UIInjector {
         // Close panel after successful execution
         this.closePanel();
       } else {
-        alert('Failed to execute prompt. Please try again.');
+        const reason = (response as { error?: string }).error || 'unknown error';
+        alert('Failed to execute prompt: ' + reason);
       }
     } catch (error) {
       console.error('[UI Injector] Failed to execute prompt:', error);

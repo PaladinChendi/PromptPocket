@@ -34,11 +34,7 @@ export interface Category {
 }
 
 export interface ExtensionSettings {
-  autoInjectUI: boolean;
-  showFloatingButton: boolean;
-  floatingButtonPosition: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
   enableKeyboardShortcuts: boolean;
-  defaultAutoSubmit: boolean;
   theme: 'light' | 'dark' | 'system';
   promptDisplayLimit: number;
 }
@@ -52,11 +48,7 @@ export interface StorageData {
 
 // Default storage data
 export const DEFAULT_SETTINGS: ExtensionSettings = {
-  autoInjectUI: true,
-  showFloatingButton: true,
-  floatingButtonPosition: 'bottom-right',
   enableKeyboardShortcuts: true,
-  defaultAutoSubmit: false,
   theme: 'system',
   promptDisplayLimit: 50
 };

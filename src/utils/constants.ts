@@ -29,14 +29,6 @@ export const UI = {
   PROMPT_PANEL_ID: 'prompt-pocket-panel',
   INJECTION_CONTAINER_ID: 'prompt-pocket-container',
 
-  // Positions
-  POSITIONS: {
-    'bottom-right': { bottom: '20px', right: '20px' },
-    'bottom-left': { bottom: '20px', left: '20px' },
-    'top-right': { top: '20px', right: '20px' },
-    'top-left': { top: '20px', left: '20px' }
-  } as const,
-
   // Z-index layers
   Z_INDEX: {
     FLOATING_BUTTON: 9999,

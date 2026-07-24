@@ -62,45 +62,6 @@ const Settings: React.FC<SettingsProps> = ({
 
         <div className="settings-item">
           <div>
-            <div className="settings-item-label">Auto-inject floating button</div>
-            <div className="settings-item-description">
-              Automatically show the floating button on ChatGPT pages
-            </div>
-          </div>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={settings.autoInjectUI}
-              onChange={(e) => handleToggle('autoInjectUI', e.target.checked)}
-              disabled={isSaving}
-            />
-            <span className="switch-slider"></span>
-          </label>
-        </div>
-
-        <div className="settings-item">
-          <div>
-            <div className="settings-item-label">Floating button position</div>
-            <div className="settings-item-description">
-              Position of the floating button on ChatGPT pages
-            </div>
-          </div>
-          <select
-            value={settings.floatingButtonPosition}
-            onChange={(e) => handleSelect('floatingButtonPosition', e.target.value)}
-            className="form-select"
-            disabled={isSaving}
-            style={{ width: '120px', fontSize: '12px' }}
-          >
-            <option value="bottom-right">Bottom Right</option>
-            <option value="bottom-left">Bottom Left</option>
-            <option value="top-right">Top Right</option>
-            <option value="top-left">Top Left</option>
-          </select>
-        </div>
-
-        <div className="settings-item">
-          <div>
             <div className="settings-item-label">Enable keyboard shortcuts</div>
             <div className="settings-item-description">
               Ctrl+Shift+P: Open panel, Ctrl+Shift+U: Toggle UI
@@ -111,24 +72,6 @@ const Settings: React.FC<SettingsProps> = ({
               type="checkbox"
               checked={settings.enableKeyboardShortcuts}
               onChange={(e) => handleToggle('enableKeyboardShortcuts', e.target.checked)}
-              disabled={isSaving}
-            />
-            <span className="switch-slider"></span>
-          </label>
-        </div>
-
-        <div className="settings-item">
-          <div>
-            <div className="settings-item-label">Default auto-submit</div>
-            <div className="settings-item-description">
-              Automatically submit prompts after insertion (can be overridden per prompt)
-            </div>
-          </div>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={settings.defaultAutoSubmit}
-              onChange={(e) => handleToggle('defaultAutoSubmit', e.target.checked)}
               disabled={isSaving}
             />
             <span className="switch-slider"></span>
@@ -248,40 +191,40 @@ const Settings: React.FC<SettingsProps> = ({
       {/* About */}
       <div className="settings-section">
         <h3 className="settings-section-title">About</h3>
+        <div className="sponsor-card">
+          <p className="sponsor-text">
+            Prompt Pocket is free and open source.
+          </p>
 
-        <div className="settings-item">
-          <div>
-            <div className="settings-item-label">Version</div>
-            <div className="settings-item-description">
-              1.0.0
-            </div>
+          <div className="info-card-title">
+            🔒 Privacy-first by design
           </div>
-        </div>
+          <p className="sponsor-text">
+            Your data stays in your browser.
+          </p>
+          <p className="sponsor-text">
+            No data is sent to our servers.
+          </p>
 
-        <div className="settings-item">
-          <div>
-            <div className="settings-item-label">Storage usage</div>
-            <div className="settings-item-description">
-              All data is stored locally in your browser
-            </div>
-          </div>
-        </div>
-
-        <div className="settings-item">
-          <div>
-            <div className="settings-item-label">Privacy</div>
-            <div className="settings-item-description">
-              No data is sent to external servers
-            </div>
-          </div>
-        </div>
-
-        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #e9ecef' }}>
-          <div style={{ fontSize: '12px', color: '#6c757d', textAlign: 'center' }}>
-            Prompt Pocket is an open-source browser extension.
-            <br />
-            All data is stored locally on your device.
-          </div>
+          <p className="sponsor-text">
+            If it saves you time, consider supporting its continued development.
+          </p>
+          <a
+            href="https://github.com/sponsors/PaladinChendi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary sponsor-btn"
+          >
+            ☕ Buy Me a Coffee
+          </a>
+          <a
+            href="https://github.com/PaladinChendi/PromptPocket"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sponsor-star"
+          >
+            ★ Star on GitHub
+          </a>
         </div>
       </div>
     </div>

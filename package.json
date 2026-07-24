@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run build:ts && npm run build:webpack",
+    "build:icons": "python3 -c \"from PIL import Image; img=Image.open('assets/logo.png'); [img.resize((s,s),Image.LANCZOS).save(f'static/icons/icon{s}.png') for s in [16,32,48,128]]\"",
+    "build": "npm run build:icons && npm run build:ts && npm run build:webpack",
     "build:ts": "tsc",
     "build:webpack": "webpack --mode=production",
     "dev": "webpack --mode=development --watch",

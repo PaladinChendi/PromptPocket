@@ -34,11 +34,7 @@ export function validateExtensionSettings(data: unknown): data is ExtensionSetti
 
   const settings = data as Partial<ExtensionSettings>;
   return (
-    typeof settings.autoInjectUI === 'boolean' &&
-    typeof settings.showFloatingButton === 'boolean' &&
-    typeof settings.floatingButtonPosition === 'string' &&
     typeof settings.enableKeyboardShortcuts === 'boolean' &&
-    typeof settings.defaultAutoSubmit === 'boolean' &&
     typeof settings.theme === 'string' &&
     typeof settings.promptDisplayLimit === 'number'
   );
