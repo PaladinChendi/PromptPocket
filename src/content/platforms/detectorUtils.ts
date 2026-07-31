@@ -53,27 +53,33 @@ export function fillContentEditable(element: HTMLElement, text: string): boolean
     DEBUG && console.log('[fillContentEditable] Filling contenteditable, className:', element.className);
     element.focus();
 
-    // Insert text at current position
+    // Insert text at the current caret position.
     document.execCommand('insertText', false, text);
 
-    // Fallback: if execCommand failed, directly set innerText
-    const finalContent = element.innerText;
-    if (!finalContent.includes(text)) {
+    // Normalize newline runs on both sides so the check survives ProseMirror's
+    // block/whitespace normalization (e.g. \n -> \n\n), which previously made the
+    // check always false for newline-bearing text and triggered a duplicate append.
+    const norm = (s: string): string =>
+      s.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n{2,}/g, '\n').replace(/\s+$/g, '');
+    const finalContent = element.innerText || '';
+    // If execCommand already inserted the text, do nothing more. Only append a fallback
+    // copy when it genuinely isn't present — this prevents the "inserted twice" bug while
+    // keeping insertion at the caret. includes (not endsWith) stays correct whether the
+    // caret was at the end or mid-content.
+    const alreadyInserted = norm(finalContent).includes(norm(text));
+
+    if (!alreadyInserted) {
       DEBUG && console.log('[fillContentEditable] execCommand failed, using innerText fallback');
-      element.innerText = (element.innerText || '') + text;
+      element.innerText = finalContent + text;
     }
 
-    // Trigger input events to ensure React framework detects the change
-    const inputEvent = new InputEvent('input', {
-      bubbles: true,
-      cancelable: false,
-      data: text,
-      inputType: 'insertText'
-    });
-    element.dispatchEvent(inputEvent);
+    // Notify the framework of the change. A plain bubbling Event('input') carries no
+    // data/inputType, so it cannot trigger a second framework insert (the old synthetic
+    // InputEvent('insertText', { data }) could re-insert the text, producing a 2nd copy).
+    element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
 
-    DEBUG && console.log('[fillContentEditable] Successfully appended text, innerText:', element.innerText.substring(0, 50));
+    DEBUG && console.log('[fillContentEditable] Successfully inserted text, innerText:', element.innerText.substring(0, 50));
     return true;
   } catch (error) {
     DEBUG && console.error('[fillContentEditable] Failed:', error);
