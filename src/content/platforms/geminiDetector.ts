@@ -6,8 +6,6 @@ import {
   findInputElement,
   fillContentEditable,
   fillTextElement,
-  clickSubmitButton,
-  submitViaEnter,
   matchesDomain,
   isProcessing
 } from './detectorUtils';
@@ -32,15 +30,6 @@ export class GeminiDetector implements PlatformDetector {
       '[rich-textarea]',
       'div.textarea-content',
       '[data-testid="prompt-textarea"]',
-    ],
-    submitSelectors: [
-      'button[type="submit"]',
-      '.send-button',
-      'button[class*="send"]',
-      'button:has(.material-icon)',
-      '[data-testid="send-button"]',
-      'button[aria-label*="Send"]',
-      'button[aria-label*="提交"]',
     ],
     processingIndicators: [
       '.loading',
@@ -103,7 +92,7 @@ export class GeminiDetector implements PlatformDetector {
     return this.inputElement;
   }
 
-  public fillInput(text: string, autoSubmit = false): boolean {
+  public fillInput(text: string): boolean {
     DEBUG && console.log('[Gemini Detector] fillInput called, text length:', text.length);
 
     if (!this.inputElement) {
@@ -125,10 +114,6 @@ export class GeminiDetector implements PlatformDetector {
       } else if (this.inputType === 'textarea' || this.inputType === 'input') {
         DEBUG && console.log('[Gemini Detector] Filling text element:', this.inputType);
         success = fillTextElement(this.inputElement as HTMLTextAreaElement | HTMLInputElement, text);
-      }
-
-      if (success && autoSubmit) {
-        setTimeout(() => this.submit(), 200);
       }
 
       return success;
@@ -206,20 +191,6 @@ export class GeminiDetector implements PlatformDetector {
       return !isDisabled && !this.state.isProcessing;
     }
     return true;
-  }
-
-  private submit(): boolean {
-    if (clickSubmitButton(this.config.submitSelectors)) {
-      DEBUG && console.log('[Gemini Detector] Submit via button click');
-      return true;
-    }
-
-    if (this.inputElement && submitViaEnter(this.inputElement)) {
-      DEBUG && console.log('[Gemini Detector] Submit via Enter key');
-      return true;
-    }
-
-    return false;
   }
 
   private startMonitoring(): void {

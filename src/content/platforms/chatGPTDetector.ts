@@ -6,8 +6,6 @@ import {
   findInputElement,
   fillContentEditable,
   fillTextElement,
-  clickSubmitButton,
-  submitViaEnter,
   matchesDomain,
   isProcessing
 } from './detectorUtils';
@@ -28,10 +26,6 @@ export class ChatGPTDetector implements PlatformDetector {
       '#prompt-textarea',
       '[data-testid="chat-input"]',
       '.ProseMirror [contenteditable="true"]',
-    ],
-    submitSelectors: [
-      '[data-testid="send-button"]',
-      'button[type="submit"]',
     ],
     processingIndicators: [
       '.animate-spin',
@@ -91,7 +85,7 @@ export class ChatGPTDetector implements PlatformDetector {
     return this.inputElement;
   }
 
-  public fillInput(text: string, autoSubmit = false): boolean {
+  public fillInput(text: string): boolean {
     DEBUG && console.log('[ChatGPT Detector] fillInput called, text length:', text.length);
 
     if (!this.inputElement) {
@@ -113,10 +107,6 @@ export class ChatGPTDetector implements PlatformDetector {
       } else if (this.inputType === 'textarea' || this.inputType === 'input') {
         DEBUG && console.log('[ChatGPT Detector] Filling text element:', this.inputType);
         success = fillTextElement(this.inputElement as HTMLTextAreaElement | HTMLInputElement, text);
-      }
-
-      if (success && autoSubmit) {
-        setTimeout(() => this.submit(), 200);
       }
 
       return success;
@@ -197,20 +187,6 @@ export class ChatGPTDetector implements PlatformDetector {
     const isDisabled = sendButton.hasAttribute('disabled') ||
                        sendButton.getAttribute('aria-disabled') === 'true';
     return !isDisabled && !this.state.isProcessing;
-  }
-
-  private submit(): boolean {
-    if (clickSubmitButton(this.config.submitSelectors)) {
-      DEBUG && console.log('[ChatGPT Detector] Submit via button click');
-      return true;
-    }
-
-    if (this.inputElement && submitViaEnter(this.inputElement)) {
-      DEBUG && console.log('[ChatGPT Detector] Submit via Enter key');
-      return true;
-    }
-
-    return false;
   }
 
   private startMonitoring(): void {

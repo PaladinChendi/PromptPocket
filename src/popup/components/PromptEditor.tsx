@@ -24,7 +24,6 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
   const [description, setDescription] = useState(prompt?.description || '');
   const [category, setCategory] = useState(prompt?.category || '');
   const [tags, setTags] = useState(prompt?.tags.join(', ') || '');
-  const [autoSubmit, setAutoSubmit] = useState(prompt?.autoSubmit || false);
   const [variables, setVariables] = useState<VariableDefinition[]>(prompt?.variables || []);
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -93,7 +92,6 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
         description: description.trim(),
         category: category || undefined,
         tags: tags.split(',').map(t => t.trim()).filter(t => t.length > 0),
-        autoSubmit,
         variables: variables.length > 0 ? variables : undefined
       };
 
@@ -329,22 +327,6 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
               </div>
             </div>
           )}
-
-          {/* Auto Submit */}
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <input
-                type="checkbox"
-                checked={autoSubmit}
-                onChange={(e) => setAutoSubmit(e.target.checked)}
-                disabled={isSaving}
-              />
-              <span style={{ fontSize: '13px' }}>Auto-submit after insertion</span>
-            </label>
-            <div style={{ fontSize: '11px', color: '#6c757d', marginTop: '4px' }}>
-              Automatically submit the prompt after inserting it into ChatGPT
-            </div>
-          </div>
         </div>
 
         <div className="modal-footer">

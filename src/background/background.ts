@@ -106,7 +106,6 @@ class BackgroundService {
       content: 'This is your first prompt template. Edit it to create useful templates for ChatGPT.',
       description: 'Get started with prompt templates',
       tags: ['welcome', 'tutorial'],
-      autoSubmit: false,
       variables: []
     };
 
@@ -187,7 +186,7 @@ class BackgroundService {
           }
         }
 
-        DEBUG && console.log('Processed content:', { length: filledContent.length, autoSubmit: prompt.autoSubmit });
+        DEBUG && console.log('Processed content:', { length: filledContent.length });
 
         // Forward to content script on active tab with processed content
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -231,7 +230,6 @@ class BackgroundService {
             type: 'FILL_PROMPT',
             payload: {
               content: filledContent,
-              autoSubmit: prompt.autoSubmit,
               id: id  // Include ID for usage tracking
             }
           };

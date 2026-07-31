@@ -6,8 +6,6 @@ import {
   findInputElement,
   fillContentEditable,
   fillTextElement,
-  clickSubmitButton,
-  submitViaEnter,
   matchesDomain,
   isProcessing
 } from './detectorUtils';
@@ -42,19 +40,6 @@ export class DoubaoDetector implements PlatformDetector {
       '.input-box',
       '#input-box',
       '[data-testid="input"]',
-    ],
-    submitSelectors: [
-      'button[type="submit"]',
-      '.send-button',
-      'button:has(.send)',
-      'button:has(.arrow-right)',
-      'button[aria-label*="发送"]',
-      'button[aria-label*="Send"]',
-      '[class*="send"][class*="button"]',
-      '[class*="submit"][class*="button"]',
-      // Icon-based buttons
-      'button svg[class*="send"]',
-      'button svg[class*="arrow"]',
     ],
     processingIndicators: [
       '.loading',
@@ -120,7 +105,7 @@ export class DoubaoDetector implements PlatformDetector {
     return this.inputElement;
   }
 
-  public fillInput(text: string, autoSubmit = false): boolean {
+  public fillInput(text: string): boolean {
     DEBUG && console.log('[Doubao Detector] fillInput called, text length:', text.length);
 
     if (!this.inputElement) {
@@ -142,10 +127,6 @@ export class DoubaoDetector implements PlatformDetector {
       } else if (this.inputType === 'textarea' || this.inputType === 'input') {
         DEBUG && console.log('[Doubao Detector] Filling text element:', this.inputType);
         success = fillTextElement(this.inputElement as HTMLTextAreaElement | HTMLInputElement, text);
-      }
-
-      if (success && autoSubmit) {
-        setTimeout(() => this.submit(), 200);
       }
 
       return success;
@@ -226,20 +207,6 @@ export class DoubaoDetector implements PlatformDetector {
       return !isDisabled && !this.state.isProcessing;
     }
     return true;
-  }
-
-  private submit(): boolean {
-    if (clickSubmitButton(this.config.submitSelectors)) {
-      DEBUG && console.log('[Doubao Detector] Submit via button click');
-      return true;
-    }
-
-    if (this.inputElement && submitViaEnter(this.inputElement)) {
-      DEBUG && console.log('[Doubao Detector] Submit via Enter key');
-      return true;
-    }
-
-    return false;
   }
 
   private startMonitoring(): void {

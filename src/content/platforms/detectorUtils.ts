@@ -156,41 +156,6 @@ export function matchesDomain(domains: string[]): boolean {
 }
 
 /**
- * Click a submit button by selector
- */
-export function clickSubmitButton(selectors: string[]): boolean {
-  for (const selector of selectors) {
-    try {
-      const button = document.querySelector(selector);
-      if (button && button instanceof HTMLElement) {
-        const isDisabled = button.hasAttribute('disabled') ||
-                          button.getAttribute('aria-disabled') === 'true';
-        if (!isDisabled) {
-          button.click();
-          return true;
-        }
-      }
-    } catch (e) {
-      // Invalid selector, skip
-    }
-  }
-  return false;
-}
-
-/**
- * Try to submit via Enter key
- */
-export function submitViaEnter(element: HTMLElement): boolean {
-  const enterEvent = new KeyboardEvent('keydown', {
-    key: 'Enter',
-    code: 'Enter',
-    bubbles: true,
-    cancelable: true
-  });
-  return element.dispatchEvent(enterEvent);
-}
-
-/**
  * Check if processing is happening
  */
 export function isProcessing(indicators: string[]): boolean {

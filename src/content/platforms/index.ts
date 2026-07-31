@@ -20,7 +20,5 @@ export {
   fillContentEditable,
   fillTextElement,
   matchesDomain,
-  clickSubmitButton,
-  submitViaEnter,
   isProcessing
 } from './detectorUtils';

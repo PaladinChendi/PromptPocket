@@ -146,17 +146,16 @@ class ContentScript {
       }
 
       case 'FILL_PROMPT': {
-        const { content, autoSubmit, id } = message.payload;
+        const { content, id } = message.payload;
 
         DEBUG && console.log('[Prompt Pocket] FILL_PROMPT received:', {
           contentLength: content?.length,
-          autoSubmit,
           id,
           platform: this.detector.getPlatformName()
         });
 
         try {
-          const success = this.detector.fillInput(content, autoSubmit);
+          const success = this.detector.fillInput(content);
 
           DEBUG && console.log('[Prompt Pocket] fillInput result:', success);
 
@@ -197,7 +196,7 @@ class ContentScript {
             }
           }
 
-          const success = this.detector.fillInput(content, prompt.autoSubmit);
+          const success = this.detector.fillInput(content);
 
           if (success) {
             await sendMessage(MessageBuilder.incrementUsage(id));

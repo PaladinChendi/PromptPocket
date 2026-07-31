@@ -38,7 +38,7 @@ export interface PlatformDetector {
   /**
    * Fill text into the input field
    */
-  fillInput(text: string, autoSubmit?: boolean): boolean;
+  fillInput(text: string): boolean;
 
   /**
    * Get the input element (for debugging/testing)
@@ -71,7 +71,6 @@ export interface PlatformConfig {
   name: string;
   domains: string[];
   inputSelectors: string[];
-  submitSelectors: string[];
   processingIndicators: string[];
 }
 

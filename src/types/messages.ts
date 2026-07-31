@@ -78,7 +78,6 @@ export interface ExecutePromptResponse {
 
 export interface FillPromptPayload {
   content: string;
-  autoSubmit?: boolean;
   id?: string;
 }
 export type FillPromptMessage = BaseMessage<'FILL_PROMPT', FillPromptPayload>;

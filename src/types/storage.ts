@@ -10,7 +10,6 @@ export interface PromptTemplate {
   createdAt: number;
   updatedAt: number;
   usageCount: number;
-  autoSubmit?: boolean;
   variables?: VariableDefinition[];
 }
 
