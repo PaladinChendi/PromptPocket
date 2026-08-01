@@ -100,9 +100,9 @@ export const MessageBuilder = {
     payload: { settings }
   } as const),
 
-  executePrompt: (id: string, variables?: Record<string, string>) => ({
+  executePrompt: (id: string) => ({
     type: 'EXECUTE_PROMPT',
-    payload: { id, variables }
+    payload: { id }
   } as const),
 
   getCategories: () => ({ type: 'GET_CATEGORIES' } as const),

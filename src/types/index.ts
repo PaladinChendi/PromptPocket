@@ -39,7 +39,6 @@ export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 // Import types from storage.ts to ensure they're available
 import type {
   PromptTemplate,
-  VariableDefinition,
   Category,
   ExtensionSettings,
   StorageData
@@ -59,7 +58,6 @@ import type {
 // Re-export everything
 export {
   type PromptTemplate,
-  type VariableDefinition,
   type Category,
   type ExtensionSettings,
   type StorageData,

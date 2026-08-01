@@ -177,45 +177,6 @@ class ContentScript {
         }
       }
 
-      case 'EXECUTE_PROMPT': {
-        const { id, variables } = message.payload;
-
-        try {
-          const response = await sendMessage(MessageBuilder.getPrompts());
-          const prompt = (response as { prompts?: Record<string, any> }).prompts?.[id];
-
-          if (!prompt) {
-            throw new Error(`Prompt with ID ${id} not found`);
-          }
-
-          let content = prompt.content;
-          if (variables) {
-            for (const [key, value] of Object.entries(variables)) {
-              const placeholder = `{{${key}}}`;
-              content = content.replace(new RegExp(placeholder, 'g'), value || '');
-            }
-          }
-
-          const success = this.detector.fillInput(content);
-
-          if (success) {
-            await sendMessage(MessageBuilder.incrementUsage(id));
-          }
-
-          return {
-            success,
-            filledContent: content,
-            platform: this.detector.getPlatformName()
-          };
-        } catch (error) {
-          DEBUG && console.error('[Prompt Pocket] Failed to execute prompt:', error);
-          return {
-            success: false,
-            error: error instanceof Error ? error.message : 'Unknown error'
-          };
-        }
-      }
-
       case 'GET_PROMPTS': {
         try {
           const response = await sendMessage(MessageBuilder.getPrompts());
@@ -270,21 +231,6 @@ class ContentScript {
    */
   public getPlatformName(): string | null {
     return this.detector ? this.detector.getPlatformName() : null;
-  }
-
-  /**
-   * Execute a prompt by ID
-   */
-  public async executePrompt(promptId: string, variables?: Record<string, string>): Promise<boolean> {
-    if (!this.detector) return false;
-
-    try {
-      const response = await sendMessage(MessageBuilder.executePrompt(promptId, variables));
-      return (response as { success: boolean }).success;
-    } catch (error) {
-      DEBUG && console.error('[Prompt Pocket] Failed to execute prompt:', error);
-      return false;
-    }
   }
 
   /**

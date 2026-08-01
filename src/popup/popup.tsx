@@ -86,17 +86,6 @@ const Popup: React.FC = () => {
 
   const handleExecutePrompt = async (id: string) => {
     try {
-      const prompt = prompts[id];
-      if (!prompt) return;
-
-      // If prompt has variables, show editor
-      if (prompt.variables && prompt.variables.length > 0) {
-        setEditingPrompt(prompt);
-        setIsEditorOpen(true);
-        return;
-      }
-
-      // Otherwise execute directly
       const response = await sendMessage(MessageBuilder.executePrompt(id));
 
       if ((response as { success: boolean }).success) {

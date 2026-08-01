@@ -105,7 +105,6 @@ export const LOG_LEVELS = {
 
 // Feature flags (for future extensibility)
 export const FEATURE_FLAGS = {
-  ENABLE_VARIABLES: true,
   ENABLE_CATEGORIES: true,
   ENABLE_KEYBOARD_SHORTCUTS: true,
   ENABLE_SYNC: false,

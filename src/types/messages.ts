@@ -68,7 +68,6 @@ export interface UpdateSettingsResponse {
 
 export interface ExecutePromptPayload {
   id: string;
-  variables?: Record<string, string>;
 }
 export type ExecutePromptMessage = BaseMessage<'EXECUTE_PROMPT', ExecutePromptPayload>;
 export interface ExecutePromptResponse {

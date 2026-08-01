@@ -10,16 +10,6 @@ export interface PromptTemplate {
   createdAt: number;
   updatedAt: number;
   usageCount: number;
-  variables?: VariableDefinition[];
-}
-
-export interface VariableDefinition {
-  name: string;
-  label: string;
-  defaultValue?: string;
-  required?: boolean;
-  type?: 'text' | 'number' | 'select';
-  options?: string[];
 }
 
 export interface Category {

@@ -105,8 +105,7 @@ class BackgroundService {
       title: 'Welcome to ChatGPT Prompt Assistant!',
       content: 'This is your first prompt template. Edit it to create useful templates for ChatGPT.',
       description: 'Get started with prompt templates',
-      tags: ['welcome', 'tutorial'],
-      variables: []
+      tags: ['welcome', 'tutorial']
     };
 
     await this.storageManager.savePrompt(welcomePrompt);
@@ -167,9 +166,9 @@ class BackgroundService {
 
       case 'EXECUTE_PROMPT': {
         // Forward EXECUTE_PROMPT to the active tab's content script
-        const { id, variables } = message.payload!;
+        const { id } = message.payload!;
 
-        DEBUG && console.log('EXECUTE_PROMPT received:', { id, variables });
+        DEBUG && console.log('EXECUTE_PROMPT received:', { id });
 
         // Get the prompt data to validate it exists
         const prompt = await this.storageManager.getPrompt(id);
@@ -177,14 +176,7 @@ class BackgroundService {
           throw new Error(`Prompt with ID ${id} not found`);
         }
 
-        // Process variables in the prompt content
-        let filledContent = prompt.content;
-        if (variables) {
-          for (const [key, value] of Object.entries(variables)) {
-            const placeholder = `{{${key}}}`;
-            filledContent = filledContent.replace(new RegExp(placeholder, 'g'), value || '');
-          }
-        }
+        const filledContent = prompt.content;
 
         DEBUG && console.log('Processed content:', { length: filledContent.length });
 
