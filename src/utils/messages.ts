@@ -1,6 +1,6 @@
 // src/utils/messages.ts
 
-import { Message, MessageResponse } from '../types';
+import { Message, MessageResponse, KeyboardCommand } from '../types';
 
 /**
  * Utility functions for message handling and communication
@@ -125,6 +125,11 @@ export const MessageBuilder = {
   importData: (data: string, format: 'json' = 'json') => ({
     type: 'IMPORT_DATA',
     payload: { data, format }
+  } as const),
+
+  keyboardShortcut: (command: KeyboardCommand) => ({
+    type: 'KEYBOARD_SHORTCUT',
+    payload: { command }
   } as const)
 };
 

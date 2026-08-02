@@ -4,7 +4,7 @@ import { UI } from '../utils/constants';
 import { createElement, removeElement, elementExists } from '../utils/dom';
 import { sendMessage, MessageBuilder } from '../utils/messages';
 import { PlatformDetector, PlatformState } from './platforms';
-import type { PromptTemplate } from '../types';
+import type { PromptTemplate, KeyboardCommand } from '../types';
 
 /**
  * Floating UI Injection System
@@ -230,10 +230,18 @@ export class UIInjector {
       }
     `;
 
-    createElement('style', {
+    if (document.getElementById('prompt-pocket-styles')) return;
+
+    // createElement() builds the element but does NOT attach it to the DOM —
+    // a detached <style> has zero rendering effect, so without this append the
+    // panel/button CSS was never applied (bare UI, and the panel couldn't be
+    // hidden because the display:none/.open rules weren't in the document).
+    const style = createElement('style', {
       id: 'prompt-pocket-styles',
       html: styles
     });
+
+    (document.head || document.documentElement).appendChild(style);
   }
 
   /**
@@ -255,10 +263,7 @@ export class UIInjector {
    * Setup event listeners
    */
   private setupEventListeners(): void {
-    // Global keyboard shortcuts
-    document.addEventListener('keydown', (event) => this.handleKeyDown(event));
-
-    // Prevent bubbling
+    // Prevent panel events from bubbling to the host page
     if (this.container) {
       this.container.addEventListener('click', (event) => {
         event.stopPropagation();
@@ -271,24 +276,15 @@ export class UIInjector {
   }
 
   /**
-   * Handle keyboard shortcuts
+   * Handle a keyboard command forwarded from the background service worker
+   * (registered as a Chrome command in manifest.json). Replaces the previous
+   * content-script `keydown` listener, which collided with Chrome's own
+   * shortcuts and only worked while the input field was focused.
    */
-  private handleKeyDown(event: KeyboardEvent): void {
-    // Only handle when focused on platform input
-    const inputField = this.detector.getInputField();
-    if (!inputField?.contains(document.activeElement)) {
-      return;
-    }
-
-    // Ctrl+Shift+P: Open panel
-    if (event.ctrlKey && event.shiftKey && event.key === 'p') {
-      event.preventDefault();
-      this.togglePanel();
-    }
-
-    // Ctrl+Shift+U: Toggle UI visibility
-    if (event.ctrlKey && event.shiftKey && event.key === 'u') {
-      event.preventDefault();
+  public async handleKeyboardCommand(command: KeyboardCommand): Promise<void> {
+    if (command === 'open-panel') {
+      await this.togglePanel();
+    } else if (command === 'toggle-ui') {
       this.toggleUIVisibility();
     }
   }
@@ -321,7 +317,7 @@ export class UIInjector {
       id: UI.FLOATING_BUTTON_ID,
       attributes: {
         'aria-label': 'Open prompt assistant',
-        'title': 'Prompt Pocket (Ctrl+Shift+P)'
+        'title': 'Prompt Pocket (Ctrl+Shift+K)'
       },
       onClick: () => this.togglePanel()
     });
@@ -431,6 +427,12 @@ export class UIInjector {
     await this.createPanel();
     this.isPanelOpen = true;
 
+    // Re-anchor to the button's current position every time we open — the
+    // button may have been dragged since the panel was first built, and
+    // createPanel() reuses the cached DOM, so without this the panel would
+    // stay pinned to its original location.
+    this.positionPanel();
+
     if (this.promptPanel) {
       this.promptPanel.classList.add('open');
     }
@@ -508,16 +510,11 @@ export class UIInjector {
     this.promptPanel.appendChild(header);
     this.promptPanel.appendChild(content);
 
-    // Position panel near floating button
-    if (this.floatingButton) {
-      const buttonRect = this.floatingButton.getBoundingClientRect();
-      this.promptPanel.style.left = `${buttonRect.left - 420}px`;
-      this.promptPanel.style.top = `${buttonRect.top}px`;
-    } else {
-      // Fallback position
-      this.promptPanel.style.right = '20px';
-      this.promptPanel.style.bottom = '80px';
-    }
+    // Position the panel. Extracted to positionPanel() so it can be re-run on
+    // every open() — the button may have been dragged since the panel was
+    // first created, and the cached panel DOM must re-anchor to the button's
+    // current location each time it's shown.
+    this.positionPanel();
 
     if (this.container) {
       this.container.appendChild(this.promptPanel);
@@ -525,6 +522,52 @@ export class UIInjector {
 
     // Load prompts
     await this.loadPrompts(content);
+  }
+
+  /**
+   * Anchor the panel to the floating button's current position.
+   *
+   * Called on every open() so the panel follows the button after it has been
+   * dragged. The panel DOM is built once and reused (createPanel caches it),
+   * so without re-positioning it would stay pinned to the button's original
+   * location. The button sits at the bottom-right corner, so the panel opens
+   * to the button's left and is bottom-aligned to it, growing upward; its
+   * height is capped to the space above the button so the prompt list scrolls
+   * inside the panel instead of overflowing the viewport.
+   */
+  private positionPanel(): void {
+    if (!this.promptPanel) return;
+
+    if (this.floatingButton) {
+      const buttonRect = this.floatingButton.getBoundingClientRect();
+      const panelWidth = 400;
+      const margin = 12;
+
+      // Open to the left of the button when there's room; otherwise to the
+      // right. Then clamp within the viewport so the panel never runs off-screen.
+      let left = buttonRect.left - panelWidth - margin;
+      if (left < margin) {
+        left = buttonRect.right + margin;
+      }
+      left = Math.max(margin, Math.min(left, window.innerWidth - panelWidth - margin));
+
+      // Bottom-align the panel to the button and cap its height to the space
+      // above the button so it never overflows the top of the viewport; the
+      // prompt list scrolls within that height instead.
+      const bottomOffset = window.innerHeight - buttonRect.bottom;
+      const availableHeight = Math.max(220, buttonRect.bottom - margin);
+      const maxHeight = Math.min(600, availableHeight);
+
+      this.promptPanel.style.left = `${left}px`;
+      this.promptPanel.style.top = 'auto';
+      this.promptPanel.style.right = 'auto';
+      this.promptPanel.style.bottom = `${bottomOffset}px`;
+      this.promptPanel.style.setProperty('max-height', `${maxHeight}px`, 'important');
+    } else {
+      // Fallback when no floating button is present
+      this.promptPanel.style.right = '20px';
+      this.promptPanel.style.bottom = '80px';
+    }
   }
 
   /**

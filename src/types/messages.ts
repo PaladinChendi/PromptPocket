@@ -15,7 +15,8 @@ export type MessageType =
   | 'SAVE_CATEGORY'
   | 'DELETE_CATEGORY'
   | 'EXPORT_DATA'
-  | 'IMPORT_DATA';
+  | 'IMPORT_DATA'
+  | 'KEYBOARD_SHORTCUT';
 
 export interface BaseMessage<T extends MessageType, P = unknown> {
   type: T;
@@ -118,6 +119,16 @@ export interface ImportDataResponse {
   importedCount: number;
 }
 
+/**
+ * Keyboard command forwarded from the background `chrome.commands.onCommand`
+ * listener to the content script. Mirrors the `commands` names in manifest.json.
+ */
+export type KeyboardCommand = 'open-panel' | 'toggle-ui';
+export interface KeyboardShortcutPayload {
+  command: KeyboardCommand;
+}
+export type KeyboardShortcutMessage = BaseMessage<'KEYBOARD_SHORTCUT', KeyboardShortcutPayload>;
+
 // Combined type for all messages
 export type Message =
   | GetPromptsMessage
@@ -132,7 +143,8 @@ export type Message =
   | SaveCategoryMessage
   | DeleteCategoryMessage
   | ExportDataMessage
-  | ImportDataMessage;
+  | ImportDataMessage
+  | KeyboardShortcutMessage;
 
 // Combined type for all responses (union type)
 export type MessageResponse =

@@ -69,14 +69,18 @@ export const DEFAULT_PROMPTS = [
   }
 ] as const;
 
-// Keyboard shortcuts
+// Keyboard shortcuts.
+// OPEN_PANEL and TOGGLE_UI are declared as Chrome commands in manifest.json
+// (`commands` field) and routed via chrome.commands.onCommand in background.ts;
+// the `default` values here mirror the suggested_key in the manifest. QUICK_INSERT
+// is declared for reference but not yet wired to a command.
 export const KEYBOARD_SHORTCUTS = {
   OPEN_PANEL: {
     description: 'Open prompt panel',
-    default: 'Ctrl+Shift+P'
+    default: 'Ctrl+Shift+K'
   },
   QUICK_INSERT: {
-    description: 'Quick insert last used prompt',
+    description: 'Quick insert last used prompt (not yet implemented)',
     default: 'Ctrl+Shift+L'
   },
   TOGGLE_UI: {

@@ -1,7 +1,8 @@
 // src/background/background.ts
 
 import { StorageManager } from '../storage/storage';
-import { Message, MessageResponse } from '../types';
+import { Message, MessageResponse, KeyboardCommand } from '../types';
+import { MessageBuilder } from '../utils/messages';
 
 /**
  * Background service worker for Prompt Pocket
@@ -32,6 +33,7 @@ class BackgroundService {
       // This ensures early messages are properly handled
       this.setupMessageHandlers();
       this.setupLifecycleHandlers();
+      this.setupCommandHandlers();
 
       // Then initialize storage
       await this.storageManager.initialize();
@@ -81,6 +83,64 @@ class BackgroundService {
     chrome.runtime.onStartup.addListener(() => {
       DEBUG && console.log('Extension started');
     });
+  }
+
+  /**
+   * Setup keyboard command handlers
+   *
+   * Commands are declared in manifest.json and routed by Chrome at the browser
+   * level, so they work regardless of page focus and never collide with Chrome's
+   * own shortcuts (Chrome manages conflicts and lets users remap in
+   * chrome://extensions/shortcuts). We forward each command to the content
+   * script on the active tab, gated by the user's "Enable keyboard shortcuts"
+   * setting.
+   */
+  private setupCommandHandlers(): void {
+    chrome.commands.onCommand.addListener((command: string) => {
+      this.handleKeyboardCommand(command as KeyboardCommand).catch((err) => {
+        DEBUG && console.error('[Prompt Pocket] Command handler error:', err);
+      });
+    });
+  }
+
+  /**
+   * Handle a keyboard command from Chrome
+   */
+  private async handleKeyboardCommand(command: KeyboardCommand): Promise<void> {
+    // Only the two manifest-declared commands are supported.
+    if (command !== 'open-panel' && command !== 'toggle-ui') return;
+
+    // Respect the user's "Enable keyboard shortcuts" setting.
+    const settings = await this.storageManager.getSettings();
+    if (!settings.enableKeyboardShortcuts) {
+      DEBUG && console.log('[Prompt Pocket] Keyboard shortcuts disabled, ignoring command:', command);
+      return;
+    }
+
+    // Forward to the content script on the active tab (must be a supported AI page).
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tabs.length === 0 || tabs[0].id === undefined) return;
+
+    const activeTab = tabs[0];
+    const isSupportedPage = activeTab.url &&
+      (activeTab.url.includes('chat.openai.com') ||
+       activeTab.url.includes('chatgpt.com') ||
+       activeTab.url.includes('doubao.com') ||
+       activeTab.url.includes('gemini.google.com'));
+
+    if (!isSupportedPage) {
+      DEBUG && console.log('[Prompt Pocket] Command ignored, active tab is not a supported AI page:', activeTab.url);
+      return;
+    }
+
+    try {
+      await chrome.tabs.sendMessage(activeTab.id!, MessageBuilder.keyboardShortcut(command));
+      DEBUG && console.log('[Prompt Pocket] Keyboard command forwarded:', command);
+    } catch (error) {
+      // Content script may not be loaded yet (e.g. page just opened before
+      // injection completed); nothing to do here.
+      DEBUG && console.error('[Prompt Pocket] Failed to forward keyboard command:', error);
+    }
   }
 
   /**

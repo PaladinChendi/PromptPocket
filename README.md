@@ -13,7 +13,7 @@ A Chrome/Edge browser extension for managing and quickly inserting prompt templa
 - **Auto-fill**: One-click insertion of prompts into AI chat interfaces
 - **Auto-submit**: Optional automatic submission after insertion
 - **Variables**: Support for variable placeholders (e.g., `{{topic}}`)
-- **Keyboard Shortcuts**: Quick access with Ctrl+Shift+P and Ctrl+Shift+U
+- **Keyboard Shortcuts**: Quick access with Ctrl+Shift+K and Ctrl+Shift+U
 
 ### Data Management
 - **Local Storage**: All data stored locally using `chrome.storage.local`
@@ -179,7 +179,7 @@ The extension uses:
 5. Optional: Enable auto-submit for instant execution
 
 ### Keyboard Shortcuts
-- **Ctrl+Shift+P**: Open prompt panel on AI chat pages
+- **Ctrl+Shift+K**: Open prompt panel on AI chat pages
 - **Ctrl+Shift+U**: Toggle floating UI visibility
 - **Ctrl+Shift+L**: Quick insert last used prompt
 

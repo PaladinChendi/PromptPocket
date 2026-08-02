@@ -64,7 +64,7 @@ const Settings: React.FC<SettingsProps> = ({
           <div>
             <div className="settings-item-label">Enable keyboard shortcuts</div>
             <div className="settings-item-description">
-              Ctrl+Shift+P: Open panel, Ctrl+Shift+U: Toggle UI
+              Ctrl+Shift+K: Open panel, Ctrl+Shift+U: Toggle UI
             </div>
           </div>
           <label className="switch">

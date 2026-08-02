@@ -206,6 +206,18 @@ class ContentScript {
         };
       }
 
+      case 'KEYBOARD_SHORTCUT': {
+        const { command } = message.payload;
+
+        if (!this.uiInjector) {
+          return { success: false, error: 'UI not ready' };
+        }
+
+        DEBUG && console.log('[Prompt Pocket] Keyboard command received:', command);
+        await this.uiInjector.handleKeyboardCommand(command);
+        return { success: true };
+      }
+
       default:
         DEBUG && console.log('[Prompt Pocket] Unknown message type:', message.type);
         return { success: false, error: 'Unknown message type' };

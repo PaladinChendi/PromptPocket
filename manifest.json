@@ -56,6 +56,17 @@
     }
   },
 
+  "commands": {
+    "open-panel": {
+      "suggested_key": { "default": "Ctrl+Shift+K" },
+      "description": "Open the prompt panel"
+    },
+    "toggle-ui": {
+      "suggested_key": { "default": "Ctrl+Shift+U" },
+      "description": "Toggle the floating UI visibility"
+    }
+  },
+
   "web_accessible_resources": [
     {
       "resources": [
