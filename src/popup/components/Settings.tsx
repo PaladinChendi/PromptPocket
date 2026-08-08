@@ -18,17 +18,6 @@ const Settings: React.FC<SettingsProps> = ({
 }) => {
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleToggle = async (key: keyof ExtensionSettings, value: boolean) => {
-    setIsSaving(true);
-    try {
-      await onUpdate({ [key]: value });
-    } catch (error) {
-      DEBUG && console.error('Failed to update setting:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const handleSelect = async (key: keyof ExtensionSettings, value: string) => {
     setIsSaving(true);
     try {
@@ -60,9 +49,15 @@ const Settings: React.FC<SettingsProps> = ({
       <div className="settings-section">
         <h3 className="settings-section-title">Interface Settings</h3>
 
-        <div className="settings-item">
+        <div
+          className="settings-item"
+          title="Keyboard shortcuts are always enabled. The toggle to configure them is coming soon."
+        >
           <div>
-            <div className="settings-item-label">Enable keyboard shortcuts</div>
+            <div className="settings-item-label">
+              Enable keyboard shortcuts
+              <span className="coming-soon-badge">Coming soon</span>
+            </div>
             <div className="settings-item-description">
               Ctrl+Shift+P: Open panel, Ctrl+Shift+U: Toggle UI
             </div>
@@ -71,8 +66,8 @@ const Settings: React.FC<SettingsProps> = ({
             <input
               type="checkbox"
               checked={settings.enableKeyboardShortcuts}
-              onChange={(e) => handleToggle('enableKeyboardShortcuts', e.target.checked)}
-              disabled={isSaving}
+              disabled
+              readOnly
             />
             <span className="switch-slider"></span>
           </label>

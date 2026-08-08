@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { PromptTemplate, Category } from '../../types';
+import FilterDropdown from './FilterDropdown';
 
 interface PromptListProps {
   prompts: Record<string, PromptTemplate>;
@@ -38,7 +39,12 @@ const PromptList: React.FC<PromptListProps> = ({
 
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(prompt => prompt.category === selectedCategory);
+      if (selectedCategory === 'uncategorized') {
+        // Uncategorized = prompts with no category set
+        filtered = filtered.filter(prompt => !prompt.category);
+      } else {
+        filtered = filtered.filter(prompt => prompt.category === selectedCategory);
+      }
     }
 
     // Sort prompts
@@ -57,23 +63,33 @@ const PromptList: React.FC<PromptListProps> = ({
     return filtered;
   }, [prompts, searchQuery, selectedCategory, sortBy]);
 
-  // Get category options
+  // Get category options (FilterOption shape: value/label)
   const categoryOptions = useMemo(() => {
     const options = [
-      { id: 'all', name: 'All Categories', count: Object.keys(prompts).length }
+      { value: 'all', label: `All Categories (${Object.keys(prompts).length})` }
     ];
 
     Object.values(categories).forEach(category => {
       const count = Object.values(prompts).filter(p => p.category === category.id).length;
-      options.push({ ...category, count });
+      options.push({ value: category.id, label: `${category.name} (${count})` });
     });
 
     // Add uncategorized
     const uncategorizedCount = Object.values(prompts).filter(p => !p.category).length;
-    options.push({ id: 'uncategorized', name: 'Uncategorized', count: uncategorizedCount });
+    options.push({ value: 'uncategorized', label: `Uncategorized (${uncategorizedCount})` });
 
     return options;
   }, [prompts, categories]);
+
+  // Sort options (FilterOption shape)
+  const sortOptions = useMemo(
+    () => [
+      { value: 'updated', label: 'Recently Updated' },
+      { value: 'title', label: 'Title A-Z' },
+      { value: 'usage', label: 'Most Used' }
+    ],
+    []
+  );
 
   // Get category name
   const getCategoryName = (categoryId?: string) => {
@@ -102,45 +118,32 @@ const PromptList: React.FC<PromptListProps> = ({
   return (
     <>
       {/* Filters */}
-      <div style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
-        <div style={{ flex: 1 }}>
+      <div className="filter-bar">
+        <div className="filter-search-wrap">
           <input
             type="text"
             placeholder="Search prompts..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="form-input"
-            style={{ width: '100%' }}
           />
         </div>
 
-        <div style={{ width: '140px' }}>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="form-select"
-            style={{ width: '100%' }}
-          >
-            {categoryOptions.map(option => (
-              <option key={option.id} value={option.id}>
-                {option.name} ({option.count})
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterDropdown
+          icon="☰"
+          label="Category"
+          value={selectedCategory}
+          options={categoryOptions}
+          onChange={(v) => setSelectedCategory(v)}
+        />
 
-        <div style={{ width: '120px' }}>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="form-select"
-            style={{ width: '100%' }}
-          >
-            <option value="updated">Recently Updated</option>
-            <option value="title">Title A-Z</option>
-            <option value="usage">Most Used</option>
-          </select>
-        </div>
+        <FilterDropdown
+          icon="⇅"
+          label="Sort"
+          value={sortBy}
+          options={sortOptions}
+          onChange={(v) => setSortBy(v as 'title' | 'usage' | 'updated')}
+        />
       </div>
 
       {/* Results count */}

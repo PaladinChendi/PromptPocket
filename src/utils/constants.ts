@@ -76,6 +76,7 @@ export const KEYBOARD_SHORTCUTS = {
     default: 'Ctrl+Shift+P'
   },
   QUICK_INSERT: {
+    // TODO: not yet implemented — wired up before enabling.
     description: 'Quick insert last used prompt',
     default: 'Ctrl+Shift+L'
   },
@@ -106,7 +107,6 @@ export const LOG_LEVELS = {
 // Feature flags (for future extensibility)
 export const FEATURE_FLAGS = {
   ENABLE_CATEGORIES: true,
-  ENABLE_KEYBOARD_SHORTCUTS: true,
   ENABLE_SYNC: false,
   ENABLE_ANALYTICS: false
 } as const;

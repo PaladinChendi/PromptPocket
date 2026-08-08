@@ -1,5 +1,12 @@
 /* src/popup/styles/popup.css */
 
+/* Global box-sizing reset (popup is not under #prompt-pocket-container) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* Popup container */
 .popup-container {
   width: 400px;
@@ -199,7 +206,96 @@
 .form-select:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* Filter bar (search + dropdown buttons) */
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filter-search-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.filter-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 72px;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background: #ffffff;
+  font-size: 13px;
+  color: #495057;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filter-trigger:hover,
+.filter-trigger[aria-expanded="true"] {
+  border-color: #667eea;
+}
+
+.filter-trigger-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.filter-trigger-label {
+  font-size: 12px;
+}
+
+.filter-trigger-caret {
+  font-size: 10px;
+  color: #6c757d;
+  margin-left: 2px;
+}
+
+.filter-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 100;
+  min-width: 160px;
+  max-height: 240px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  background: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.filter-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.filter-option:hover {
+  background: #f0f2ff;
+}
+
+.filter-option[aria-selected="true"] {
+  background: #e8ecff;
+  color: #4254cc;
+  font-weight: 500;
 }
 
 .form-textarea {
@@ -444,6 +540,26 @@
   margin-top: 2px;
 }
 
+/* "Coming soon" badge for pending features */
+.coming-soon-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 14px;
+  color: #6c757d;
+  background-color: #e9ecef;
+  border-radius: 8px;
+  vertical-align: middle;
+}
+
+/* Disabled switch (locked state) */
+.switch input:disabled + .switch-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Switch toggle */
 .switch {
   position: relative;
@@ -515,8 +631,46 @@ input:checked + .switch-slider:before {
     color: #ffffff;
   }
 
+  .filter-trigger {
+    background: #2d2d2d;
+    border-color: #404040;
+    color: #ffffff;
+  }
+
+  .filter-trigger:hover,
+  .filter-trigger[aria-expanded="true"] {
+    border-color: #667eea;
+  }
+
+  .filter-trigger-caret {
+    color: #adb5bd;
+  }
+
+  .filter-menu {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .filter-option {
+    color: #ffffff;
+  }
+
+  .filter-option:hover {
+    background: #3a3a3a;
+  }
+
+  .filter-option[aria-selected="true"] {
+    background: #40406a;
+    color: #b3bbff;
+  }
+
   .settings-item {
     border-bottom-color: #2d2d2d;
+  }
+
+  .coming-soon-badge {
+    color: #adb5bd;
+    background-color: #404040;
   }
 
   .info-card,
