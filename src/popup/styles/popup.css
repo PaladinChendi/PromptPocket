@@ -1,5 +1,17 @@
 /* src/popup/styles/popup.css */
 
+/* Theme tokens. Light is the default; [data-theme="dark"] overrides below.
+   Inline styles in components reference these via var(--pp-*) so theme
+   switches apply even to elements styled inline. */
+:root {
+  --pp-surface: #f8f9fa;
+  --pp-surface-border: #e9ecef;
+  --pp-text: #212529;
+  --pp-text-muted: #6c757d;
+  --pp-text-secondary: #495057;
+  --pp-accent-ring: #495057;
+}
+
 /* Global box-sizing reset (popup is not under #prompt-pocket-container) */
 *,
 *::before,
@@ -592,75 +604,236 @@ input:checked + .switch-slider:before {
   transform: translateX(20px);
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .popup-container {
-    background: #1a1a1a;
-    color: #ffffff;
-  }
+/* Dark mode support.
+   Driven by a `data-theme` attribute on <html>:
+   - data-theme="dark"  → user picked Dark
+   - data-theme="light" → user picked Light (default base styles)
+   - data-theme="system" → follow the OS preference via the media query below.
+   The [data-theme="dark"] block is also mirrored for system users when the OS
+   is in dark mode, by applying data-theme="dark" at runtime in that case. */
+[data-theme="dark"] {
+  --pp-bg: #1a1a1a;
+  --pp-surface: #2d2d2d;
+  --pp-surface-border: #404040;
+  --pp-text: #ffffff;
+  --pp-text-muted: #adb5bd;
+  --pp-text-secondary: #ffffff;
+  --pp-accent-ring: #adb5bd;
+  --pp-border: #404040;
+}
 
-  .prompt-item {
-    background: #2d2d2d;
-    border-color: #404040;
-  }
+[data-theme="dark"] .popup-container {
+  background: #1a1a1a;
+  color: #ffffff;
+}
 
-  .prompt-item:hover {
-    background: #404040;
-    border-color: #555555;
-  }
+[data-theme="dark"] .prompt-item {
+  background: #2d2d2d;
+  border-color: #404040;
+}
 
-  .form-input,
-  .form-textarea,
-  .form-select {
-    background: #2d2d2d;
-    border-color: #404040;
-    color: #ffffff;
-  }
+[data-theme="dark"] .prompt-item:hover {
+  background: #404040;
+  border-color: #555555;
+}
 
-  .filter-trigger {
-    background: #2d2d2d;
-    border-color: #404040;
-    color: #ffffff;
-  }
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-textarea,
+[data-theme="dark"] .form-select {
+  background: #2d2d2d;
+  border-color: #404040;
+  color: #ffffff;
+}
 
-  .filter-trigger:hover,
-  .filter-trigger[aria-expanded="true"] {
-    border-color: #667eea;
-  }
+[data-theme="dark"] .filter-trigger {
+  background: #2d2d2d;
+  border-color: #404040;
+  color: #ffffff;
+}
 
-  .filter-trigger-caret {
-    color: #adb5bd;
-  }
+[data-theme="dark"] .filter-trigger:hover,
+[data-theme="dark"] .filter-trigger[aria-expanded="true"] {
+  border-color: #667eea;
+}
 
-  .filter-menu {
-    background: #2d2d2d;
-    border-color: #404040;
-  }
+[data-theme="dark"] .filter-trigger-caret {
+  color: #adb5bd;
+}
 
-  .filter-option {
-    color: #ffffff;
-  }
+[data-theme="dark"] .filter-menu {
+  background: #2d2d2d;
+  border-color: #404040;
+}
 
-  .filter-option:hover {
-    background: #3a3a3a;
-  }
+[data-theme="dark"] .filter-option {
+  color: #ffffff;
+}
 
-  .filter-option[aria-selected="true"] {
-    background: #40406a;
-    color: #b3bbff;
-  }
+[data-theme="dark"] .filter-option:hover {
+  background: #3a3a3a;
+}
 
-  .settings-item {
-    border-bottom-color: #2d2d2d;
-  }
+[data-theme="dark"] .filter-option[aria-selected="true"] {
+  background: #40406a;
+  color: #b3bbff;
+}
 
-  .info-card,
-  .sponsor-card {
-    background: #2d2d2d;
-    border-color: #404040;
-  }
+[data-theme="dark"] .settings-item {
+  border-bottom-color: #2d2d2d;
+}
 
-  .info-card-title {
-    color: #ffffff;
-  }
+[data-theme="dark"] .info-card,
+[data-theme="dark"] .sponsor-card {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .info-card-title {
+  color: #ffffff;
+}
+
+/* --- Comprehensive dark palette for elements not covered above --- */
+
+/* Page/body background (prevents white flashing around the container) */
+[data-theme="dark"] body {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+/* Tabs bar */
+[data-theme="dark"] .tabs-container {
+  background: #242424;
+  border-bottom-color: #404040;
+}
+
+[data-theme="dark"] .tab-button {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .tab-button:hover {
+  background: #2d2d2d;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .tab-button.active {
+  color: #9ba8ff;
+  border-bottom-color: #667eea;
+  background: #1a1a1a;
+}
+
+/* Prompt item text */
+[data-theme="dark"] .prompt-item-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .prompt-item-description {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .tag {
+  background: #404040;
+  color: #dee2e6;
+}
+
+/* Form labels */
+[data-theme="dark"] .form-label {
+  color: #dee2e6;
+}
+
+/* Native <option> list follows the select's dark palette */
+[data-theme="dark"] option {
+  background: #2d2d2d;
+  color: #ffffff;
+}
+
+/* Secondary + icon buttons */
+[data-theme="dark"] .btn-secondary {
+  background: #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: #555555;
+}
+
+[data-theme="dark"] .btn-icon {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .btn-icon:hover {
+  background: #404040;
+  color: #ffffff;
+}
+
+/* Sponsor / info card text */
+[data-theme="dark"] .sponsor-text {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .sponsor-star {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .sponsor-star:hover {
+  color: #ffffff;
+}
+
+/* Modal */
+[data-theme="dark"] .modal {
+  background: #242424;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .modal-header {
+  border-bottom-color: #404040;
+}
+
+[data-theme="dark"] .modal-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .modal-close {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .modal-close:hover {
+  background: #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .modal-footer {
+  border-top-color: #404040;
+}
+
+/* Settings text */
+[data-theme="dark"] .settings-section-title {
+  color: #ffffff;
+  border-bottom-color: #404040;
+}
+
+[data-theme="dark"] .settings-item {
+  border-bottom-color: #2d2d2d;
+}
+
+[data-theme="dark"] .settings-item-label {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .settings-item-description {
+  color: #adb5bd;
+}
+
+/* Switch track in dark */
+[data-theme="dark"] .switch-slider {
+  background-color: #555555;
+}
+
+/* Empty state + loading spinner */
+[data-theme="dark"] .empty-state {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .loading-spinner {
+  border-color: #404040;
+  border-top-color: #667eea;
 }

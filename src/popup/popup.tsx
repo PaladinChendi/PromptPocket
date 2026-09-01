@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { PromptTemplate, Category, ExtensionSettings } from '../types';
 import { sendMessage, MessageBuilder } from '../utils/messages';
+import { applyTheme, watchSystemTheme } from '../utils/theme';
 import PromptList from './components/PromptList';
 import PromptEditor from './components/PromptEditor';
 import CategoryManager from './components/CategoryManager';
@@ -26,6 +27,15 @@ const Popup: React.FC = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  // Apply theme whenever settings change, and track OS changes while in 'system' mode.
+  useEffect(() => {
+    if (!settings) return;
+    applyTheme(settings.theme);
+    // In 'system' mode, re-apply when the OS color-scheme flips.
+    const unsubscribe = watchSystemTheme(() => applyTheme(settings.theme));
+    return unsubscribe;
+  }, [settings?.theme]);
 
   const loadData = async () => {
     try {

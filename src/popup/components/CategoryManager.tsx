@@ -107,8 +107,8 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
   return (
     <div>
       {/* Create Category Form */}
-      <div style={{ background: '#f8f9fa', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
-        <h3 style={{ fontSize: '14px', marginBottom: '12px', color: '#495057' }}>Create New Category</h3>
+      <div style={{ background: 'var(--pp-surface)', padding: '16px', borderRadius: '8px', marginBottom: '20px', border: '1px solid var(--pp-surface-border)' }}>
+        <h3 style={{ fontSize: '14px', marginBottom: '12px', color: 'var(--pp-text-secondary)' }}>Create New Category</h3>
 
         <div className="form-group">
           <label className="form-label">Category Name</label>
@@ -146,7 +146,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
                   height: '24px',
                   borderRadius: '50%',
                   background: color,
-                  border: newCategoryColor === color ? '2px solid #495057' : '2px solid transparent',
+                  border: newCategoryColor === color ? '2px solid var(--pp-accent-ring)' : '2px solid transparent',
                   cursor: 'pointer'
                 }}
                 onClick={() => setNewCategoryColor(color)}
@@ -154,7 +154,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
               />
             ))}
           </div>
-          <div style={{ fontSize: '11px', color: '#6c757d', marginTop: '8px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--pp-text-muted)', marginTop: '8px' }}>
             Selected: <code>{newCategoryColor}</code>
           </div>
         </div>
@@ -170,7 +170,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
       </div>
 
       {/* Category List */}
-      <h3 style={{ fontSize: '14px', marginBottom: '12px', color: '#495057' }}>Your Categories</h3>
+      <h3 style={{ fontSize: '14px', marginBottom: '12px', color: 'var(--pp-text-secondary)' }}>Your Categories</h3>
 
       {Object.keys(categories).length === 0 ? (
         <div className="empty-state">
@@ -189,8 +189,8 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
               <div
                 key={category.id}
                 style={{
-                  background: '#f8f9fa',
-                  border: '1px solid #e9ecef',
+                  background: 'var(--pp-surface)',
+                  border: '1px solid var(--pp-surface-border)',
                   borderRadius: '8px',
                   padding: '16px',
                   display: 'flex',
@@ -208,15 +208,15 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
                     }}
                   />
                   <div>
-                    <div style={{ fontSize: '14px', fontWeight: 500, color: '#212529' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--pp-text)' }}>
                       {category.name}
                     </div>
                     {category.description && (
-                      <div style={{ fontSize: '12px', color: '#6c757d', marginTop: '2px' }}>
+                      <div style={{ fontSize: '12px', color: 'var(--pp-text-muted)', marginTop: '2px' }}>
                         {category.description}
                       </div>
                     )}
-                    <div style={{ fontSize: '11px', color: '#6c757d', marginTop: '4px' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--pp-text-muted)', marginTop: '4px' }}>
                       {promptCount} prompt{promptCount !== 1 ? 's' : ''} • Created{' '}
                       {new Date(category.createdAt).toLocaleDateString()}
                     </div>
@@ -303,7 +303,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({
                         height: '24px',
                         borderRadius: '50%',
                         background: color,
-                        border: editingCategory.color === color ? '2px solid #495057' : '2px solid transparent',
+                        border: editingCategory.color === color ? '2px solid var(--pp-accent-ring)' : '2px solid transparent',
                         cursor: 'pointer'
                       }}
                       onClick={() => setEditingCategory({

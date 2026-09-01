@@ -147,7 +147,7 @@ const PromptList: React.FC<PromptListProps> = ({
       </div>
 
       {/* Results count */}
-      <div style={{ fontSize: '12px', color: '#6c757d', marginBottom: '12px' }}>
+      <div style={{ fontSize: '12px', color: 'var(--pp-text-muted)', marginBottom: '12px' }}>
         {filteredPrompts.length} prompt{filteredPrompts.length !== 1 ? 's' : ''} found
       </div>
 
@@ -211,7 +211,7 @@ const PromptList: React.FC<PromptListProps> = ({
                 )}
               </div>
 
-              <div style={{ fontSize: '11px', color: '#6c757d', display: 'flex', gap: '8px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--pp-text-muted)', display: 'flex', gap: '8px' }}>
                 <span>Used {prompt.usageCount}×</span>
                 <span>•</span>
                 <span title={new Date(prompt.updatedAt).toLocaleString()}>

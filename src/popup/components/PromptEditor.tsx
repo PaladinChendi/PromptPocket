@@ -142,7 +142,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
               placeholder="comma, separated, tags"
               disabled={isSaving}
             />
-            <div style={{ fontSize: '11px', color: '#6c757d', marginTop: '4px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--pp-text-muted)', marginTop: '4px' }}>
               Separate tags with commas
             </div>
           </div>
