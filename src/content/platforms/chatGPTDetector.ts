@@ -161,10 +161,18 @@ export class ChatGPTDetector implements PlatformDetector {
         });
       }
     } else if (this.inputElement) {
-      // Only warn if we had an element but lost it
-      DEBUG && console.warn('[ChatGPT Detector] Lost input element');
-      this.inputElement = null;
-      this.inputType = null;
+      // Selectors came up empty. ChatGPT frequently re-renders the composer, so the
+      // input may transiently fail to match while still being attached. If our cached
+      // element is still connected, keep it and avoid a spurious "lost" warning — the
+      // next detection cycle will re-confirm it. Only drop the reference once the
+      // element is actually detached from the DOM.
+      if (this.inputElement.isConnected) {
+        DEBUG && console.log('[ChatGPT Detector] Selectors missed, cached input still connected; keeping it');
+      } else {
+        DEBUG && console.warn('[ChatGPT Detector] Lost input element (detached)');
+        this.inputElement = null;
+        this.inputType = null;
+      }
     }
   }
 

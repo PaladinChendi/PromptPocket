@@ -168,10 +168,16 @@ export class GeminiDetector implements PlatformDetector {
         });
       }
     } else if (this.inputElement) {
-      // Only warn if we had an element but lost it
-      DEBUG && console.warn('[Gemini Detector] Lost input element');
-      this.inputElement = null;
-      this.inputType = null;
+      // Selectors came up empty. The composer may be transiently re-rendering. If the
+      // cached element is still connected, keep it and avoid a spurious "lost" warning;
+      // the next detection cycle will re-confirm it. Only drop it once detached.
+      if (this.inputElement.isConnected) {
+        DEBUG && console.log('[Gemini Detector] Selectors missed, cached input still connected; keeping it');
+      } else {
+        DEBUG && console.warn('[Gemini Detector] Lost input element (detached)');
+        this.inputElement = null;
+        this.inputType = null;
+      }
     }
   }
 
