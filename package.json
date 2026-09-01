@@ -1,6 +1,6 @@
 {
   "name": "PromptPocket",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Chrome extension for managing ChatGPT prompt templates",
   "private": true,
   "scripts": {
