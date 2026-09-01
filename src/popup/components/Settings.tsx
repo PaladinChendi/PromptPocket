@@ -56,7 +56,6 @@ const Settings: React.FC<SettingsProps> = ({
           <div>
             <div className="settings-item-label">
               Enable keyboard shortcuts
-              <span className="coming-soon-badge">Coming soon</span>
             </div>
             <div className="settings-item-description">
               Ctrl+Shift+P: Open panel, Ctrl+Shift+U: Toggle UI

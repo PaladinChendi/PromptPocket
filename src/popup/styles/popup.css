@@ -540,20 +540,6 @@
   margin-top: 2px;
 }
 
-/* "Coming soon" badge for pending features */
-.coming-soon-badge {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 1px 6px;
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 14px;
-  color: #6c757d;
-  background-color: #e9ecef;
-  border-radius: 8px;
-  vertical-align: middle;
-}
-
 /* Disabled switch (locked state) */
 .switch input:disabled + .switch-slider {
   opacity: 0.5;
@@ -666,11 +652,6 @@ input:checked + .switch-slider:before {
 
   .settings-item {
     border-bottom-color: #2d2d2d;
-  }
-
-  .coming-soon-badge {
-    color: #adb5bd;
-    background-color: #404040;
   }
 
   .info-card,
