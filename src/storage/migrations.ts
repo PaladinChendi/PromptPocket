@@ -96,14 +96,24 @@ export class MigrationManager {
       return DEFAULT_STORAGE_DATA;
     }
 
-    // Ensure required fields exist
+    // Ensure required fields exist. Settings is whitelisted so that fields
+    // removed from ExtensionSettings (e.g. autoInjectUI, defaultAutoSubmit,
+    // floatingButtonPosition, showFloatingButton, promptDisplayLimit) are
+    // stripped from old data and never re-exported.
+    const settings = data.settings || {};
     const validatedData: StorageData = {
       version: data.version || '1.0.0',
       prompts: data.prompts || {},
       categories: data.categories || {},
       settings: {
-        ...DEFAULT_STORAGE_DATA.settings,
-        ...(data.settings || {})
+        enableKeyboardShortcuts:
+          typeof settings.enableKeyboardShortcuts === 'boolean'
+            ? settings.enableKeyboardShortcuts
+            : DEFAULT_STORAGE_DATA.settings.enableKeyboardShortcuts,
+        theme:
+          typeof settings.theme === 'string'
+            ? settings.theme
+            : DEFAULT_STORAGE_DATA.settings.theme
       }
     };
 

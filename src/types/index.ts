@@ -3,39 +3,6 @@
 export * from './storage';
 export * from './messages';
 
-export interface ChatGptUIState {
-  isChatPage: boolean;
-  hasInputField: boolean;
-  inputField?: HTMLTextAreaElement | null;
-  isThinking: boolean;
-  canSubmit: boolean;
-  uiVersion?: string;
-}
-
-export interface FloatingUIState {
-  isVisible: boolean;
-  position: { x: number; y: number };
-  selectedPromptId?: string;
-  isDragging: boolean;
-}
-
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
-
-export interface LogEntry {
-  timestamp: number;
-  level: LogLevel;
-  message: string;
-  data?: unknown;
-  source: string;
-}
-
-// Utility types
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-
-export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
-
 // Import types from storage.ts to ensure they're available
 import type {
   PromptTemplate,

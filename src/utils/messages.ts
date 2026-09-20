@@ -32,47 +32,6 @@ export async function sendMessage(
 }
 
 /**
- * Send message to content script on specific tab
- */
-export async function sendMessageToTab(
-  tabId: number,
-  message: Message,
-  timeout = 5000
-): Promise<MessageResponse> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error(`Tab message timeout: ${message.type}`));
-    }, timeout);
-
-    chrome.tabs.sendMessage(tabId, message, (response) => {
-      clearTimeout(timer);
-
-      if (chrome.runtime.lastError) {
-        reject(new Error(chrome.runtime.lastError.message));
-        return;
-      }
-
-      resolve(response as MessageResponse);
-    });
-  });
-}
-
-/**
- * Check if we're on a ChatGPT page
- */
-export function isChatGptPage(url?: string): boolean {
-  const currentUrl = url || window.location.href;
-  return currentUrl.includes('chat.openai.com') || currentUrl.includes('chatgpt.com');
-}
-
-/**
- * Generate a unique request ID for tracking message responses
- */
-export function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-}
-
-/**
  * Message builder helpers for type-safe message creation
  */
 export const MessageBuilder = {
@@ -117,33 +76,16 @@ export const MessageBuilder = {
     payload: { id }
   } as const),
 
-  exportData: (format: 'json' = 'json') => ({
-    type: 'EXPORT_DATA',
-    payload: { format }
+  exportData: () => ({
+    type: 'EXPORT_DATA'
   } as const),
 
-  importData: (data: string, format: 'json' = 'json') => ({
+  importData: (data: string) => ({
     type: 'IMPORT_DATA',
-    payload: { data, format }
+    payload: { data }
+  } as const),
+
+  clearData: () => ({
+    type: 'CLEAR_DATA'
   } as const)
 };
-
-/**
- * Error response helper
- */
-export function createErrorResponse(error: Error | string) {
-  return {
-    success: false,
-    error: error instanceof Error ? error.message : error
-  };
-}
-
-/**
- * Success response helper
- */
-export function createSuccessResponse<T = unknown>(data?: T) {
-  return {
-    success: true,
-    ...(data && { data })
-  };
-}

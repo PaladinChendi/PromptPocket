@@ -15,7 +15,8 @@ export type MessageType =
   | 'SAVE_CATEGORY'
   | 'DELETE_CATEGORY'
   | 'EXPORT_DATA'
-  | 'IMPORT_DATA';
+  | 'IMPORT_DATA'
+  | 'CLEAR_DATA';
 
 export interface BaseMessage<T extends MessageType, P = unknown> {
   type: T;
@@ -99,10 +100,7 @@ export interface DeleteCategoryPayload {
 }
 export type DeleteCategoryMessage = BaseMessage<'DELETE_CATEGORY', DeleteCategoryPayload>;
 
-export interface ExportDataPayload {
-  format: 'json';
-}
-export type ExportDataMessage = BaseMessage<'EXPORT_DATA', ExportDataPayload>;
+export type ExportDataMessage = BaseMessage<'EXPORT_DATA'>;
 export interface ExportDataResponse {
   data: string;
   success: boolean;
@@ -110,12 +108,16 @@ export interface ExportDataResponse {
 
 export interface ImportDataPayload {
   data: string;
-  format: 'json';
 }
 export type ImportDataMessage = BaseMessage<'IMPORT_DATA', ImportDataPayload>;
 export interface ImportDataResponse {
   success: boolean;
   importedCount: number;
+}
+
+export type ClearDataMessage = BaseMessage<'CLEAR_DATA'>;
+export interface ClearDataResponse {
+  success: boolean;
 }
 
 // Combined type for all messages
@@ -132,7 +134,8 @@ export type Message =
   | SaveCategoryMessage
   | DeleteCategoryMessage
   | ExportDataMessage
-  | ImportDataMessage;
+  | ImportDataMessage
+  | ClearDataMessage;
 
 // Combined type for all responses (union type)
 export type MessageResponse =
@@ -144,25 +147,5 @@ export type MessageResponse =
   | ExecutePromptResponse
   | GetCategoriesResponse
   | ExportDataResponse
-  | ImportDataResponse;
-
-// Helper type guards for type narrowing
-export function isGetPromptsResponse(response: MessageResponse): response is GetPromptsResponse {
-  return 'prompts' in response;
-}
-
-export function isGetSettingsResponse(response: MessageResponse): response is GetSettingsResponse {
-  return 'settings' in response;
-}
-
-export function isGetCategoriesResponse(response: MessageResponse): response is GetCategoriesResponse {
-  return 'categories' in response;
-}
-
-export function isExportDataResponse(response: MessageResponse): response is ExportDataResponse {
-  return 'data' in response && !('filledContent' in response);
-}
-
-export function isImportDataResponse(response: MessageResponse): response is ImportDataResponse {
-  return 'importedCount' in response;
-}
+  | ImportDataResponse
+  | ClearDataResponse;

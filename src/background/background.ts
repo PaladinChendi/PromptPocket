@@ -196,10 +196,11 @@ class BackgroundService {
           (activeTab.url.includes('chat.openai.com') ||
            activeTab.url.includes('chatgpt.com') ||
            activeTab.url.includes('doubao.com') ||
-           activeTab.url.includes('gemini.google.com'));
+           activeTab.url.includes('gemini.google.com') ||
+           activeTab.url.includes('claude.ai'));
 
         if (!isSupportedPage) {
-          const supportedSites = 'chatgpt.com, doubao.com, or gemini.google.com';
+          const supportedSites = 'chatgpt.com, doubao.com, gemini.google.com, or claude.ai';
           throw new Error(`This page (${activeTab.url}) is not a supported AI page. Please navigate to ${supportedSites}`);
         }
 
@@ -262,6 +263,11 @@ class BackgroundService {
         const { data } = message.payload!;
         const result = await this.storageManager.importData(data);
         return { ...result } as MessageResponse;
+      }
+
+      case 'CLEAR_DATA': {
+        await this.storageManager.clearAllData();
+        return { success: true } as MessageResponse;
       }
 
       default:

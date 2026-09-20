@@ -25,7 +25,6 @@ export interface Category {
 export interface ExtensionSettings {
   enableKeyboardShortcuts: boolean;
   theme: 'light' | 'dark' | 'system';
-  promptDisplayLimit: number;
 }
 
 export interface StorageData {
@@ -37,9 +36,8 @@ export interface StorageData {
 
 // Default storage data
 export const DEFAULT_SETTINGS: ExtensionSettings = {
-  enableKeyboardShortcuts: true,
-  theme: 'system',
-  promptDisplayLimit: 50
+  enableKeyboardShortcuts: false,
+  theme: 'system'
 };
 
 export const DEFAULT_STORAGE_DATA: StorageData = {

@@ -6,7 +6,6 @@ import { migrationManager } from './migrations';
 export class StorageManager {
   private static instance: StorageManager;
   private initialized = false;
-  private listeners: Array<(data: StorageData) => void> = [];
 
   private constructor() {}
 
@@ -28,32 +27,7 @@ export class StorageManager {
       await this.setStorageData(DEFAULT_STORAGE_DATA);
     }
 
-    // Set up storage change listener
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-      if (areaName === 'local' && changes.storageData) {
-        const newData = changes.storageData.newValue as StorageData;
-        this.notifyListeners(newData);
-      }
-    });
-
     this.initialized = true;
-  }
-
-  /**
-   * Subscribe to storage changes
-   */
-  public subscribe(listener: (data: StorageData) => void): () => void {
-    this.listeners.push(listener);
-    return () => {
-      const index = this.listeners.indexOf(listener);
-      if (index > -1) {
-        this.listeners.splice(index, 1);
-      }
-    };
-  }
-
-  private notifyListeners(data: StorageData): void {
-    this.listeners.forEach(listener => listener(data));
   }
 
   /**
@@ -223,17 +197,20 @@ export class StorageManager {
 
   public async importData(jsonData: string): Promise<{ success: boolean; importedCount: number }> {
     try {
-      const importedData = JSON.parse(jsonData) as StorageData;
+      const parsed = JSON.parse(jsonData);
 
-      // Validate imported data structure
-      if (!this.validateStorageData(importedData)) {
+      // Reject anything that isn't structurally a StorageData payload.
+      if (!this.validateStorageData(parsed)) {
         throw new Error('Invalid data format');
       }
 
-      await this.setStorageData(importedData);
+      // Run through migrations to normalize settings (strips removed fields)
+      // before persisting, so re-exported data stays clean.
+      const normalized = await migrationManager.migrate(parsed);
+      await this.setStorageData(normalized);
 
-      const promptCount = Object.keys(importedData.prompts).length;
-      const categoryCount = Object.keys(importedData.categories).length;
+      const promptCount = Object.keys(normalized.prompts).length;
+      const categoryCount = Object.keys(normalized.categories).length;
 
       return {
         success: true,
