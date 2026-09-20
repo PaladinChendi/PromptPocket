@@ -167,6 +167,25 @@ const Popup: React.FC = () => {
     event.target.value = '';
   };
 
+  const handleClearData = async () => {
+    if (!confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await sendMessage(MessageBuilder.clearData());
+
+      if ((response as { success: boolean }).success) {
+        await loadData();
+      } else {
+        alert('Failed to clear data');
+      }
+    } catch (error) {
+      DEBUG && console.error('Failed to clear data:', error);
+      alert('Failed to clear data');
+    }
+  };
+
   const handleNewPrompt = () => {
     setEditingPrompt(null);
     setIsEditorOpen(true);
@@ -204,6 +223,7 @@ const Popup: React.FC = () => {
 
   return (
     <div className="popup-container">
+    <div className="popup-sticky">
       <header className="popup-header">
         <div>
           <h1 className="popup-title">Prompt Pocket</h1>
@@ -231,6 +251,7 @@ const Popup: React.FC = () => {
           Settings
         </button>
       </div>
+    </div>
 
       <main className="popup-content">
         {activeTab === 'prompts' && (
@@ -266,6 +287,7 @@ const Popup: React.FC = () => {
             onUpdate={handleUpdateSettings}
             onExport={handleExportData}
             onImport={handleImportData}
+            onClear={handleClearData}
           />
         )}
       </main>

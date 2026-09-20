@@ -19,13 +19,32 @@
   box-sizing: border-box;
 }
 
+/* Zero only the top body margin: the top 8px is re-created as the sticky
+   wrapper's own opaque padding-top (see .popup-sticky), so scrolling content
+   can't leak through the gap above the pinned header. Side/bottom margins keep
+   the UA default 8px for the floating look. */
+body {
+  margin-top: 0;
+}
+
 /* Popup container */
 .popup-container {
   width: 400px;
   min-height: 500px;
-  max-height: 700px;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+}
+
+/* Sticky wrapper: keeps header + tabs pinned during whole-page scroll.
+   Pinned at top:0 with an opaque 8px padding-top, so the header sits 8px below
+   the window edge (matching the body-margin look) AND the 8px above it is
+   opaque — scrolling content passes behind it instead of leaking through. */
+.popup-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding-top: 8px;
   background: #ffffff;
 }
 
@@ -88,7 +107,6 @@
 /* Content */
 .popup-content {
   flex: 1;
-  overflow-y: auto;
   padding: 20px;
 }
 
@@ -625,6 +643,10 @@ input:checked + .switch-slider:before {
 [data-theme="dark"] .popup-container {
   background: #1a1a1a;
   color: #ffffff;
+}
+
+[data-theme="dark"] .popup-sticky {
+  background: #1a1a1a;
 }
 
 [data-theme="dark"] .prompt-item {
