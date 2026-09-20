@@ -4,6 +4,7 @@ import { PlatformDetector, PlatformState } from './basePlatformDetector';
 import { ChatGPTDetector } from './chatGPTDetector';
 import { DoubaoDetector } from './doubaoDetector';
 import { GeminiDetector } from './geminiDetector';
+import { ClaudeDetector } from './claudeDetector';
 
 /**
  * Factory for creating platform detectors
@@ -18,6 +19,7 @@ export class DetectorFactory {
     new ChatGPTDetector(),
     new DoubaoDetector(),
     new GeminiDetector(),
+    new ClaudeDetector(),
   ];
 
   private static activeDetector: PlatformDetector | null = null;

@@ -9,6 +9,7 @@ export type {
 export { ChatGPTDetector } from './chatGPTDetector';
 export { DoubaoDetector } from './doubaoDetector';
 export { GeminiDetector } from './geminiDetector';
+export { ClaudeDetector } from './claudeDetector';
 export {
   DetectorFactory,
   getPlatformDetector,
