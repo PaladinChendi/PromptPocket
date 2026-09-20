@@ -8,13 +8,15 @@ interface SettingsProps {
   onUpdate: (settings: Partial<ExtensionSettings>) => Promise<void>;
   onExport: () => void;
   onImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClear: () => void;
 }
 
 const Settings: React.FC<SettingsProps> = ({
   settings,
   onUpdate,
   onExport,
-  onImport
+  onImport,
+  onClear
 }) => {
   const [isSaving, setIsSaving] = useState(false);
 
@@ -29,30 +31,13 @@ const Settings: React.FC<SettingsProps> = ({
     }
   };
 
-  const handleNumber = async (key: keyof ExtensionSettings, value: string) => {
-    const numValue = parseInt(value, 10);
-    if (!isNaN(numValue) && numValue > 0) {
-      setIsSaving(true);
-      try {
-        await onUpdate({ [key]: numValue });
-      } catch (error) {
-        DEBUG && console.error('Failed to update setting:', error);
-      } finally {
-        setIsSaving(false);
-      }
-    }
-  };
-
   return (
     <div>
       {/* UI Settings */}
       <div className="settings-section">
         <h3 className="settings-section-title">Interface Settings</h3>
 
-        <div
-          className="settings-item"
-          title="Keyboard shortcuts are always enabled. The toggle to configure them is coming soon."
-        >
+        <div className="settings-item">
           <div>
             <div className="settings-item-label">
               Enable keyboard shortcuts
@@ -90,25 +75,6 @@ const Settings: React.FC<SettingsProps> = ({
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>
-        </div>
-
-        <div className="settings-item">
-          <div>
-            <div className="settings-item-label">Prompt display limit</div>
-            <div className="settings-item-description">
-              Maximum number of prompts to show before pagination
-            </div>
-          </div>
-          <input
-            type="number"
-            value={settings.promptDisplayLimit}
-            onChange={(e) => handleNumber('promptDisplayLimit', e.target.value)}
-            className="form-input"
-            disabled={isSaving}
-            style={{ width: '70px', fontSize: '12px' }}
-            min="10"
-            max="200"
-          />
         </div>
       </div>
 
@@ -169,12 +135,7 @@ const Settings: React.FC<SettingsProps> = ({
           </div>
           <button
             className="btn btn-danger btn-sm"
-            onClick={() => {
-              if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-                // TODO: Implement clear data
-                alert('Data cleared');
-              }
-            }}
+            onClick={onClear}
             disabled={isSaving}
           >
             Clear
