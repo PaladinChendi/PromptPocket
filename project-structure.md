@@ -39,6 +39,7 @@ prompt-pocket/
 │   │   │   ├── PromptEditor.tsx
 │   │   │   ├── CategoryManager.tsx
 │   │   │   ├── FilterDropdown.tsx
+│   │   │   ├── VariableForm.tsx
 │   │   │   └── Settings.tsx
 │   │   └── styles/
 │   │       └── popup.css
@@ -51,6 +52,7 @@ prompt-pocket/
 │       ├── constants.ts         # UI element IDs, z-index layers, animation timings
 │       ├── messages.ts          # sendMessage helper and MessageBuilder
 │       ├── dom.ts               # DOM helpers (createElement, debounce, ...)
+│       ├── variables.ts         # {{name}} placeholder parsing and substitution
 │       └── theme.ts             # Theme resolution and system-theme watching
 │
 ├── static/

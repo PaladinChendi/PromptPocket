@@ -9,6 +9,8 @@ import PromptList from './components/PromptList';
 import PromptEditor from './components/PromptEditor';
 import CategoryManager from './components/CategoryManager';
 import Settings from './components/Settings';
+import VariableForm from './components/VariableForm';
+import { hasVariables } from '../utils/variables';
 import './styles/popup.css';
 
 type Tab = 'prompts' | 'categories' | 'settings';
@@ -22,6 +24,7 @@ const Popup: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [editingPrompt, setEditingPrompt] = useState<PromptTemplate | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [variablePrompt, setVariablePrompt] = useState<PromptTemplate | null>(null);
 
   // Load data on mount
   useEffect(() => {
@@ -94,9 +97,20 @@ const Popup: React.FC = () => {
     }
   };
 
+  // A prompt with `{{name}}` placeholders goes through the fill-in form first;
+  // everything else is inserted straight away.
   const handleExecutePrompt = async (id: string) => {
+    const prompt = prompts[id];
+    if (prompt && hasVariables(prompt.content)) {
+      setVariablePrompt(prompt);
+      return;
+    }
+    await insertPrompt(id);
+  };
+
+  const insertPrompt = async (id: string, variables?: Record<string, string>) => {
     try {
-      const response = await sendMessage(MessageBuilder.executePrompt(id));
+      const response = await sendMessage(MessageBuilder.executePrompt(id, variables));
 
       if ((response as { success: boolean }).success) {
         // Close popup after execution
@@ -291,6 +305,17 @@ const Popup: React.FC = () => {
           />
         )}
       </main>
+
+      {variablePrompt && (
+        <VariableForm
+          prompt={variablePrompt}
+          onSubmit={async (values) => {
+            await insertPrompt(variablePrompt.id, values);
+            setVariablePrompt(null);
+          }}
+          onCancel={() => setVariablePrompt(null)}
+        />
+      )}
 
       {isEditorOpen && (
         <PromptEditor

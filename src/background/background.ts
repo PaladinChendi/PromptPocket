@@ -2,6 +2,7 @@
 
 import { StorageManager } from '../storage/storage';
 import { Message, MessageResponse } from '../types';
+import { substituteVariables } from '../utils/variables';
 
 /**
  * Background service worker for Prompt Pocket
@@ -166,9 +167,9 @@ class BackgroundService {
 
       case 'EXECUTE_PROMPT': {
         // Forward EXECUTE_PROMPT to the active tab's content script
-        const { id } = message.payload!;
+        const { id, variables } = message.payload!;
 
-        DEBUG && console.log('EXECUTE_PROMPT received:', { id });
+        DEBUG && console.log('EXECUTE_PROMPT received:', { id, variables });
 
         // Get the prompt data to validate it exists
         const prompt = await this.storageManager.getPrompt(id);
@@ -176,7 +177,9 @@ class BackgroundService {
           throw new Error(`Prompt with ID ${id} not found`);
         }
 
-        const filledContent = prompt.content;
+        // Substitution happens here, not in the callers, so both entry points
+        // (the popup list and the injected panel) resolve variables identically.
+        const filledContent = substituteVariables(prompt.content, variables ?? {});
 
         DEBUG && console.log('Processed content:', { length: filledContent.length });
 

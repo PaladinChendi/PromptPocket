@@ -5,6 +5,7 @@ import { createElement, removeElement, elementExists } from '../utils/dom';
 import { sendMessage, MessageBuilder } from '../utils/messages';
 import { PlatformDetector, PlatformState } from './platforms';
 import type { ExtensionSettings, PromptTemplate } from '../types';
+import { extractVariables } from '../utils/variables';
 
 /**
  * Floating UI Injection System
@@ -18,6 +19,7 @@ export class UIInjector {
   private container: HTMLElement | null = null;
   private floatingButton: HTMLElement | null = null;
   private promptPanel: HTMLElement | null = null;
+  private panelContent: HTMLElement | null = null;
   private isPanelOpen = false;
   private shortcutsEnabled = false;
   private isDragging = false;
@@ -197,6 +199,85 @@ export class UIInjector {
         text-align: center !important;
         padding: 40px 20px !important;
         color: #6c757d !important;
+      }
+
+      .prompt-item-variables {
+        font-size: 10px !important;
+        font-weight: 500 !important;
+        background: #e7e9fd !important;
+        color: #4c51bf !important;
+        padding: 1px 6px !important;
+        border-radius: 8px !important;
+        margin-left: 6px !important;
+        vertical-align: middle !important;
+      }
+
+      .variable-form {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+      }
+
+      .variable-form-title {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #212529 !important;
+        margin: 0 !important;
+      }
+
+      .variable-field {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+      }
+
+      .variable-label {
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        color: #495057 !important;
+      }
+
+      .variable-input {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 8px 10px !important;
+        font-size: 13px !important;
+        font-family: inherit !important;
+        color: #212529 !important;
+        background: white !important;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 6px !important;
+        outline: none !important;
+      }
+
+      .variable-input:focus {
+        border-color: #667eea !important;
+      }
+
+      .variable-actions {
+        display: flex !important;
+        justify-content: flex-end !important;
+        gap: 8px !important;
+        margin-top: 4px !important;
+      }
+
+      .variable-button {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+        font-family: inherit !important;
+        border: none !important;
+        border-radius: 6px !important;
+        cursor: pointer !important;
+      }
+
+      .variable-button-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+      }
+
+      .variable-button-secondary {
+        background: #e9ecef !important;
+        color: #495057 !important;
       }
 
       .panel-backdrop {
@@ -530,6 +611,7 @@ export class UIInjector {
     const content = createElement('div', {
       className: 'panel-content'
     });
+    this.panelContent = content;
 
     this.promptPanel.appendChild(header);
     this.promptPanel.appendChild(content);
@@ -621,13 +703,21 @@ export class UIInjector {
   private createPromptItem(id: string, prompt: PromptTemplate): HTMLElement {
     const item = createElement('div', {
       className: 'prompt-item',
-      onClick: () => this.handlePromptClick(id)
+      onClick: () => this.handlePromptClick(id, prompt)
     });
 
     const title = createElement('div', {
       className: 'prompt-item-title',
       textContent: prompt.title
     });
+
+    const variableCount = extractVariables(prompt.content).length;
+    if (variableCount > 0) {
+      title.appendChild(createElement('span', {
+        className: 'prompt-item-variables',
+        textContent: `${variableCount} var${variableCount !== 1 ? 's' : ''}`
+      }));
+    }
 
     const description = createElement('div', {
       className: 'prompt-item-description',
@@ -643,9 +733,96 @@ export class UIInjector {
   /**
    * Handle prompt item click
    */
-  private async handlePromptClick(id: string): Promise<void> {
+  private async handlePromptClick(id: string, prompt: PromptTemplate): Promise<void> {
+    if (extractVariables(prompt.content).length > 0) {
+      this.showVariableForm(prompt);
+      return;
+    }
+    await this.executePrompt(id);
+  }
+
+  /**
+   * Swap the panel's list view for a fill-in form, then insert with the
+   * collected values. Going back re-renders the list.
+   */
+  private showVariableForm(prompt: PromptTemplate): void {
+    const content = this.panelContent;
+    if (!content) return;
+
+    const names = extractVariables(prompt.content);
+    const inputs = new Map<string, HTMLInputElement>();
+
+    content.innerHTML = '';
+
+    const form = createElement('div', { className: 'variable-form' });
+
+    form.appendChild(createElement('div', {
+      className: 'variable-form-title',
+      textContent: prompt.title
+    }));
+
+    for (const name of names) {
+      const field = createElement('div', { className: 'variable-field' });
+      field.appendChild(createElement('label', {
+        className: 'variable-label',
+        textContent: name
+      }));
+
+      const input = createElement('input', {
+        className: 'variable-input',
+        attributes: { type: 'text', placeholder: `Value for ${name}` }
+      });
+      inputs.set(name, input);
+      field.appendChild(input);
+      form.appendChild(field);
+    }
+
+    const submit = () => {
+      const values: Record<string, string> = {};
+      for (const [name, input] of inputs) {
+        values[name] = input.value;
+      }
+      void this.executePrompt(prompt.id, values);
+    };
+
+    // Enter submits from any field; Ctrl/Cmd+Enter works too, matching the popup.
+    form.addEventListener('keydown', (event) => {
+      if ((event as KeyboardEvent).key === 'Enter') {
+        event.preventDefault();
+        submit();
+      }
+    });
+
+    const actions = createElement('div', {
+      className: 'variable-actions',
+      children: [
+        createElement('button', {
+          className: 'variable-button variable-button-secondary',
+          textContent: 'Back',
+          onClick: () => {
+            void this.loadPrompts(content);
+          }
+        }),
+        createElement('button', {
+          className: 'variable-button variable-button-primary',
+          textContent: 'Insert',
+          onClick: submit
+        })
+      ]
+    });
+
+    form.appendChild(actions);
+    content.appendChild(form);
+
+    inputs.get(names[0])?.focus();
+  }
+
+  /**
+   * Send the prompt to the active tab, optionally with resolved variables.
+   */
+  private async executePrompt(id: string, variables?: Record<string, string>): Promise<void> {
     try {
-      const response = await sendMessage(MessageBuilder.executePrompt(id));
+      const response = await sendMessage(MessageBuilder.executePrompt(id, variables));
 
       if ((response as { success: boolean }).success) {
         // Close panel after successful execution

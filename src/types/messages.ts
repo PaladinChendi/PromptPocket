@@ -69,6 +69,9 @@ export interface UpdateSettingsResponse {
 
 export interface ExecutePromptPayload {
   id: string;
+  /** Values for the prompt's `{{name}}` placeholders. Omitted when the prompt
+   *  has none, or when the caller is inserting it unresolved. */
+  variables?: Record<string, string>;
 }
 export type ExecutePromptMessage = BaseMessage<'EXECUTE_PROMPT', ExecutePromptPayload>;
 export interface ExecutePromptResponse {

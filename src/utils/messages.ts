@@ -65,9 +65,9 @@ export const MessageBuilder = {
     payload: { settings }
   } as const),
 
-  executePrompt: (id: string) => ({
+  executePrompt: (id: string, variables?: Record<string, string>) => ({
     type: 'EXECUTE_PROMPT',
-    payload: { id }
+    payload: { id, variables }
   } as const),
 
   getCategories: () => ({ type: 'GET_CATEGORIES' } as const),

@@ -17,9 +17,9 @@ This project was originally named "ChatGPT Prompt Assistant" and has been rebran
 - **Auto-fill**: One-click prompt insertion at the caret position
 - **Categories & Tags**: Organizational system for prompts
 - **Multi-Platform Detection**: One detector per platform behind a shared interface
+- **Variable Support**: `{{name}}` placeholders, resolved through a fill-in form
 
 ### ⬜ Not Implemented
-- **Variable Support**: `{{variable}}` placeholders — the prompt is inserted verbatim
 - **Auto-submit**: Insertion never submits; the user sends the message
 - **Keyboard Shortcuts**: Handlers exist but are gated off by a locked setting
 
@@ -238,7 +238,7 @@ npm run package      # Create distribution ZIP
 4. **Store Submission**: Prepare for Chrome Web Store
 
 ### Short-term:
-1. **Variables**: Implement `{{placeholder}}` substitution at insertion time
+1. **Richer Variables**: Default values, dropdown choices, remembered last input
 2. **Keyboard Shortcuts**: Finish the feature and unlock its setting
 3. **Sync Support**: Cross-device synchronization
 4. **Template Library**: Built-in prompt templates
@@ -251,7 +251,7 @@ npm run package      # Create distribution ZIP
 
 ## Conclusion
 
-This implementation provides a secure, extensible foundation for a prompt management extension. The modular architecture allows for future growth while maintaining performance and user privacy. Variables, auto-submit and keyboard shortcuts remain unimplemented; see the Next Steps section.
+This implementation provides a secure, extensible foundation for a prompt management extension. The modular architecture allows for future growth while maintaining performance and user privacy. Auto-submit and keyboard shortcuts remain unimplemented; see the Next Steps section.
 
 The extension successfully addresses the core requirements:
 - ✅ Manifest V3 compliance

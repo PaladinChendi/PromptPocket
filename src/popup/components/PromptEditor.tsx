@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { PromptTemplate, Category } from '../../types';
+import { extractVariables } from '../../utils/variables';
 
 interface PromptEditorProps {
   prompt?: PromptTemplate | null;
@@ -63,6 +64,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
       setIsSaving(false);
     }
   };
+
+  const detectedVariables = extractVariables(content);
 
   const categoryOptions = Object.values(categories).map(cat => ({
     id: cat.id,
@@ -154,7 +157,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="form-textarea"
-              placeholder="Enter your prompt template."
+              placeholder="Enter your prompt template. Use {{name}} for a value you fill in at insertion time."
               rows={8}
               disabled={isSaving}
             />
@@ -163,6 +166,18 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
                 {errors.content}
               </div>
             )}
+            <div style={{ fontSize: '11px', color: 'var(--pp-text-muted)', marginTop: '4px' }}>
+              {detectedVariables.length > 0 ? (
+                <>
+                  Variables:{' '}
+                  {detectedVariables.map(name => (
+                    <span key={name} className="tag">{name}</span>
+                  ))}
+                </>
+              ) : (
+                <>Wrap a name in double braces to make it a variable, e.g. {'{{topic}}'}</>
+              )}
+            </div>
           </div>
         </div>
 

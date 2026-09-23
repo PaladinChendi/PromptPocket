@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { PromptTemplate, Category } from '../../types';
 import FilterDropdown from './FilterDropdown';
+import { extractVariables } from '../../utils/variables';
 
 interface PromptListProps {
   prompts: Record<string, PromptTemplate>;
@@ -22,6 +23,16 @@ const PromptList: React.FC<PromptListProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'title' | 'usage' | 'updated'>('updated');
+
+  // How many values each prompt asks for, so the list can mark the ones that
+  // open a fill-in form instead of inserting straight away.
+  const variableCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const prompt of Object.values(prompts)) {
+      counts[prompt.id] = extractVariables(prompt.content).length;
+    }
+    return counts;
+  }, [prompts]);
 
   // Get sorted and filtered prompts
   const filteredPrompts = useMemo(() => {
@@ -198,6 +209,12 @@ const PromptList: React.FC<PromptListProps> = ({
                 >
                   {getCategoryName(prompt.category)}
                 </span>
+
+                {variableCounts[prompt.id] > 0 && (
+                  <span className="tag" title="This prompt asks for values before it is inserted">
+                    {variableCounts[prompt.id]} var{variableCounts[prompt.id] !== 1 ? 's' : ''}
+                  </span>
+                )}
 
                 {prompt.tags.length > 0 && (
                   <div className="prompt-item-tags">

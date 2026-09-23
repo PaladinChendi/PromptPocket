@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Prompt Pocket",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Create, manage, and quickly insert prompt templates for AI assistants",
   "author": "PaladinChendi",
 

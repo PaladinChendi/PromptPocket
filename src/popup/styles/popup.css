@@ -859,3 +859,17 @@ input:checked + .switch-slider:before {
   border-color: #404040;
   border-top-color: #667eea;
 }
+/* Resolved-prompt preview in the variable fill-in form */
+.variable-preview {
+  padding: 10px;
+  background: var(--pp-surface);
+  border: 1px solid var(--pp-surface-border);
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--pp-text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 140px;
+  overflow-y: auto;
+}

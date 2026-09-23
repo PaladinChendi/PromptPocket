@@ -30,13 +30,11 @@
 - **Bulk Operations**: Multi-select for batch actions
 - **Undo Support**: Confirmation dialogs with undo options
 
-#### Variable Handling (planned — not implemented)
-Variables are not supported yet; prompts are inserted verbatim. When they land,
-they should follow these principles:
-- **Inline Detection**: Automatic variable extraction from prompt content
-- **Smart Defaults**: Remember previous variable values
-- **Type Validation**: Input validation based on variable type
-- **Preview Mode**: See how variables will be replaced
+#### Variable Handling
+- **Inline Detection**: Automatic variable extraction from prompt content — done
+- **Preview Mode**: See how variables will be replaced — done
+- **Smart Defaults**: Remember previous variable values — planned
+- **Type Validation**: Input validation based on variable type — planned
 
 #### Keyboard Navigation (partly planned)
 Shortcuts are not active yet — the setting that gates them ships off and locked.

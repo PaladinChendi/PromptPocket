@@ -11,10 +11,10 @@ A Chrome/Edge browser extension for managing and quickly inserting prompt templa
 - **Multi-Platform Support**: Works with ChatGPT, Claude, Gemini, and Doubao
 - **Floating UI**: Injects a floating button on AI chat pages for quick access
 - **Auto-fill**: One-click insertion of prompts into AI chat interfaces
+- **Variables**: `{{name}}` placeholders, filled in at insertion time
 
 ### Not Yet Available
-These are planned but **not implemented** — the prompt is inserted exactly as stored:
-- **Variables**: `{{placeholder}}` substitution
+These are planned but **not implemented**:
 - **Auto-submit**: Automatic submission after insertion
 - **Keyboard Shortcuts**: The setting exists but is locked off, and no shortcut is active
 
@@ -179,13 +179,26 @@ The extension uses:
 
 ### Basic Workflow
 1. Click extension icon to open popup
-2. Create prompt templates
+2. Create prompt templates, using `{{name}}` for anything that changes per use
 3. Visit an AI chat platform and click the floating button
-4. Select a prompt — its content is inserted at the caret
-5. Review and send it yourself
+4. Select a prompt — fill in its variables if it has any
+5. The content is inserted at the caret; review and send it yourself
 
 You can also insert straight from the popup's prompt list, which targets the
 active tab.
+
+### Variables
+Put `{{name}}` anywhere in a prompt's content to create a variable. Names accept
+letters (any script, so Chinese names work), digits, underscore and hyphen;
+`{{ topic }}` and `{{topic}}` are the same variable.
+
+When you insert a prompt that has variables, a fill-in form appears first — in
+the popup, or inside the floating panel on the page — listing each variable in
+the order it appears, with a live preview of the resolved text. The same name
+used several times is filled once and substituted everywhere. A value left
+blank is inserted as empty text.
+
+Prompts without variables are inserted immediately, as before.
 
 ### Keyboard Shortcuts
 Not available yet. `Ctrl+Shift+P` and `Ctrl+Shift+U` are wired up in the code but
@@ -195,7 +208,7 @@ disabled in the UI until the feature is finished.
 ## Extensibility
 
 ### Future Features
-1. **Variables**: `{{placeholder}}` substitution at insertion time
+1. **Richer Variables**: Default values, dropdown choices, remembered last input
 2. **Auto-submit**: Optional automatic submission after insertion
 3. **Keyboard Shortcuts**: Finish and unlock the existing setting
 4. **Template Library**: Community-shared prompt templates
