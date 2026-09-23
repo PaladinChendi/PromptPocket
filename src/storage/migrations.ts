@@ -5,6 +5,9 @@ import { StorageData, DEFAULT_STORAGE_DATA } from '../types';
 export interface Migration {
   version: string;
   description: string;
+  // Migration input is whatever an older build wrote to storage; its shape is
+  // unknown by definition and is validated on the way out.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   migrate: (data: any) => Promise<any>;
 }
 
@@ -12,6 +15,7 @@ export const MIGRATIONS: Migration[] = [
   {
     version: '1.0.0',
     description: 'Initial migration to structured storage format',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     migrate: async (data: any) => {
       // If no existing data, return defaults
       if (!data || !data.version) {
@@ -58,6 +62,7 @@ export class MigrationManager {
   /**
    * Apply all necessary migrations to bring data to current version
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async migrate(data: any): Promise<StorageData> {
     let currentData = data || {};
     const currentVersion = currentData.version || '0.0.0';
@@ -89,6 +94,7 @@ export class MigrationManager {
   /**
    * Validate migrated data and ensure it has required structure
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private validateAndReturnData(data: any): StorageData {
     // Basic validation
     if (!data || typeof data !== 'object') {

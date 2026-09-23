@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A production-ready Chrome/Edge browser extension for managing and inserting prompt templates into ChatGPT. Built with TypeScript, Manifest V3, and modern web technologies.
+A Chrome/Edge browser extension for managing and inserting prompt templates into AI chat platforms (ChatGPT, Claude, Gemini, Doubao). Built with TypeScript, Manifest V3, and modern web technologies.
 
 ## Product Rebranding Note
 
@@ -13,16 +13,21 @@ This project was originally named "ChatGPT Prompt Assistant" and has been rebran
 ### ✅ Core Features
 - **Prompt Template Management**: Create, edit, delete, and organize prompts
 - **Local Storage**: Secure local storage using `chrome.storage.local`
-- **Floating UI**: Injected floating button on ChatGPT pages
-- **Auto-fill & Auto-submit**: One-click prompt insertion with optional auto-submit
-- **Variable Support**: `{{variable}}` placeholders with type-safe handling
+- **Floating UI**: Injected floating button on supported AI chat pages
+- **Auto-fill**: One-click prompt insertion at the caret position
 - **Categories & Tags**: Organizational system for prompts
+- **Multi-Platform Detection**: One detector per platform behind a shared interface
+
+### ⬜ Not Implemented
+- **Variable Support**: `{{variable}}` placeholders — the prompt is inserted verbatim
+- **Auto-submit**: Insertion never submits; the user sends the message
+- **Keyboard Shortcuts**: Handlers exist but are gated off by a locked setting
 
 ### ✅ Technical Implementation
 - **Manifest V3**: Fully compliant with Chrome's latest extension standard
 - **TypeScript**: Full type safety across all modules
 - **Modular Architecture**: Clean separation of concerns
-- **Resilient DOM Detection**: Multi-layered ChatGPT interface detection
+- **Resilient DOM Detection**: Multi-layered, per-platform interface detection
 - **React UI**: Modern, responsive popup interface
 - **Message Passing**: Type-safe communication between components
 
@@ -35,7 +40,7 @@ This project was originally named "ChatGPT Prompt Assistant" and has been rebran
 ## Architecture Highlights
 
 ### 1. Multi-layered Detection System
-- **Primary**: Data-testid attributes for ChatGPT interface elements
+- **Primary**: Data-testid attributes for the platform's interface elements
 - **Secondary**: ID-based and placeholder-based selectors
 - **Tertiary**: Generic textarea detection
 - **Resilience**: MutationObserver + interval-based backup detection
@@ -68,7 +73,9 @@ This project was originally named "ChatGPT Prompt Assistant" and has been rebran
 5. **`src/storage/storage.ts`**: Storage abstraction with type safety
 
 ### Supporting Modules:
-6. **`src/content/chatgptDetector.ts`**: Resilient ChatGPT detection
+6. **`src/content/platforms/`**: One detector per AI platform behind a shared
+   `PlatformDetector` interface, plus `detectorFactory.ts` (selects the detector
+   matching the current page) and `detectorUtils.ts` (shared input lookup and fill)
 7. **`src/content/uiInjector.ts`**: Floating UI injection logic
 8. **`src/types/*.ts`**: TypeScript interfaces and type definitions
 9. **`src/utils/*.ts`**: Utility functions for messaging, DOM, etc.
@@ -119,7 +126,7 @@ npm run package      # Create distribution ZIP
 ### Deployment Steps:
 1. Build with `npm run build`
 2. Load unpacked extension from `dist/` folder
-3. Test on ChatGPT pages
+3. Test on a supported AI chat page
 4. Package with `npm run package` for store submission
 
 ## Security Considerations
@@ -165,7 +172,7 @@ npm run package      # Create distribution ZIP
 ## Testing Strategy
 
 ### 1. Manual Testing
-- ChatGPT interface detection
+- Interface detection on each supported platform
 - Prompt insertion functionality
 - UI responsiveness
 - Cross-browser compatibility
@@ -225,34 +232,33 @@ npm run package      # Create distribution ZIP
 ## Next Steps
 
 ### Immediate (v1.0.0):
-1. **Testing**: Comprehensive manual testing on ChatGPT
+1. **Testing**: Comprehensive manual testing on each supported platform
 2. **Bug Fixes**: Address any issues found during testing
 3. **Polish**: UI refinements and performance optimizations
 4. **Store Submission**: Prepare for Chrome Web Store
 
-### Short-term (v1.1.0):
-1. **Sync Support**: Cross-device synchronization
-2. **Template Library**: Built-in prompt templates
-3. **Advanced Variables**: More variable types and validation
-4. **Keyboard Shortcuts**: Enhanced shortcut support
+### Short-term:
+1. **Variables**: Implement `{{placeholder}}` substitution at insertion time
+2. **Keyboard Shortcuts**: Finish the feature and unlock its setting
+3. **Sync Support**: Cross-device synchronization
+4. **Template Library**: Built-in prompt templates
 
 ### Long-term (v2.0.0):
-1. **Multi-site Support**: Claude, Gemini, etc.
+1. **More Platforms**: Beyond ChatGPT, Claude, Gemini and Doubao (all shipped)
 2. **Plugin System**: Third-party extensions
 3. **AI Features**: Smart prompt suggestions
 4. **Collaboration**: Team and community features
 
 ## Conclusion
 
-This implementation provides a robust, secure, and extensible foundation for a prompt management extension. The modular architecture allows for future growth while maintaining performance and user privacy. The code is production-ready with comprehensive documentation and follows industry best practices for browser extension development.
+This implementation provides a secure, extensible foundation for a prompt management extension. The modular architecture allows for future growth while maintaining performance and user privacy. Variables, auto-submit and keyboard shortcuts remain unimplemented; see the Next Steps section.
 
 The extension successfully addresses the core requirements:
 - ✅ Manifest V3 compliance
 - ✅ TypeScript implementation
-- ✅ Resilient ChatGPT detection
+- ✅ Resilient multi-platform detection
 - ✅ Local storage with chrome.storage.local
 - ✅ Floating UI injection
 - ✅ Prompt template management
-- ✅ Variable support
 - ✅ Security and privacy considerations
 - ✅ Extensible architecture

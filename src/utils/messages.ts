@@ -1,6 +1,12 @@
 // src/utils/messages.ts
 
-import { Message, MessageResponse } from '../types';
+import {
+  Message,
+  MessageResponse,
+  SavePromptPayload,
+  SaveCategoryPayload,
+  UpdateSettingsPayload
+} from '../types';
 
 /**
  * Utility functions for message handling and communication
@@ -37,7 +43,7 @@ export async function sendMessage(
 export const MessageBuilder = {
   getPrompts: () => ({ type: 'GET_PROMPTS' } as const),
 
-  savePrompt: (prompt: any, id?: string) => ({
+  savePrompt: (prompt: SavePromptPayload['prompt'], id?: string) => ({
     type: 'SAVE_PROMPT',
     payload: { prompt, id }
   } as const),
@@ -54,7 +60,7 @@ export const MessageBuilder = {
 
   getSettings: () => ({ type: 'GET_SETTINGS' } as const),
 
-  updateSettings: (settings: any) => ({
+  updateSettings: (settings: UpdateSettingsPayload['settings']) => ({
     type: 'UPDATE_SETTINGS',
     payload: { settings }
   } as const),
@@ -66,7 +72,7 @@ export const MessageBuilder = {
 
   getCategories: () => ({ type: 'GET_CATEGORIES' } as const),
 
-  saveCategory: (category: any, id?: string) => ({
+  saveCategory: (category: SaveCategoryPayload['category'], id?: string) => ({
     type: 'SAVE_CATEGORY',
     payload: { category, id }
   } as const),

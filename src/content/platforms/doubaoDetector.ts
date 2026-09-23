@@ -66,6 +66,7 @@ export class DoubaoDetector implements PlatformDetector {
   private inputElement: HTMLElement | null = null;
   private inputType: 'contenteditable' | 'textarea' | 'input' | null = null;
   private mutationObserver: MutationObserver | null = null;
+  private monitoringInterval: number | null = null;
   private stateChangeListeners: Array<(state: PlatformState) => void> = [];
 
   public initialize(): void {
@@ -140,6 +141,10 @@ export class DoubaoDetector implements PlatformDetector {
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
       this.mutationObserver = null;
+    }
+    if (this.monitoringInterval !== null) {
+      clearInterval(this.monitoringInterval);
+      this.monitoringInterval = null;
     }
     this.stateChangeListeners = [];
     this.inputElement = null;
@@ -218,8 +223,13 @@ export class DoubaoDetector implements PlatformDetector {
   private startMonitoring(): void {
     this.setupMutationObserver();
 
-    // Interval backup
-    setInterval(() => {
+    // Interval backup. initialize() can run again on the same instance (the
+    // factory caches detectors), so drop any previous timer first rather than
+    // stacking a second one.
+    if (this.monitoringInterval !== null) {
+      clearInterval(this.monitoringInterval);
+    }
+    this.monitoringInterval = setInterval(() => {
       this.detectInitialState();
     }, 2000);
   }

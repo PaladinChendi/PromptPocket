@@ -8,12 +8,15 @@ A Chrome/Edge browser extension for managing and quickly inserting prompt templa
 ### Core Features
 - **Prompt Template Management**: Create, edit, delete, and organize prompt templates
 - **Categories & Tags**: Organize prompts with categories and tags
-- **Multi-Platform Support**: Works with ChatGPT, Gemini, Doubao, and more
+- **Multi-Platform Support**: Works with ChatGPT, Claude, Gemini, and Doubao
 - **Floating UI**: Injects a floating button on AI chat pages for quick access
 - **Auto-fill**: One-click insertion of prompts into AI chat interfaces
-- **Auto-submit**: Optional automatic submission after insertion
-- **Variables**: Support for variable placeholders (e.g., `{{topic}}`)
-- **Keyboard Shortcuts**: Quick access with Ctrl+Shift+P and Ctrl+Shift+U
+
+### Not Yet Available
+These are planned but **not implemented** — the prompt is inserted exactly as stored:
+- **Variables**: `{{placeholder}}` substitution
+- **Auto-submit**: Automatic submission after insertion
+- **Keyboard Shortcuts**: The setting exists but is locked off, and no shortcut is active
 
 ### Data Management
 - **Local Storage**: All data stored locally using `chrome.storage.local`
@@ -24,7 +27,7 @@ A Chrome/Edge browser extension for managing and quickly inserting prompt templa
 ### UI Features
 - **Drag & Drop**: Reposition the floating button anywhere on screen
 - **Responsive Design**: Works on both desktop and mobile Chrome
-- **Dark Mode Support**: Follows system theme preferences
+- **Theme**: Light, dark, or follow the system preference
 - **Search & Filter**: Quickly find prompts by title, tags, or category
 
 ## Installation
@@ -48,7 +51,7 @@ A Chrome/Edge browser extension for managing and quickly inserting prompt templa
 ### Production Build
 ```bash
 npm run package
-# Creates prompt-pocket.zip in project root
+# Creates promptpocket.zip in project root
 ```
 
 ## Architecture
@@ -81,14 +84,14 @@ src/
 3. **Storage Manager** (`storage.ts`):
    - Type-safe abstraction over `chrome.storage.local`
    - Data migration support
-   - Change listeners for real-time updates
+   - Singleton owned by the service worker; every read/write goes through it
 
-4. **Platform_detector Factory** (`detectorFactory.ts`):
+4. **Platform Detector Factory** (`detectorFactory.ts`):
    - Manages multiple platform detectors
    - Selects appropriate detector based on current URL
    - Handles platform switching
 
-5. **Platform Detectors** (`chatGPTDetector.ts`, `geminiDetector.ts`, `doubaoDetector.ts`):
+5. **Platform Detectors** (`chatGPTDetector.ts`, `claudeDetector.ts`, `geminiDetector.ts`, `doubaoDetector.ts`):
    - Resilient DOM detection using multiple strategies
    - MutationObserver for UI changes
    - Version-agnostic detection per platform
@@ -96,7 +99,7 @@ src/
 6. **UI Injector** (`uiInjector.ts`):
    - Manages floating button and panel injection
    - Drag & drop functionality
-   - Keyboard shortcut handling
+   - Keyboard shortcut handling (gated on a setting that is currently locked off)
 
 ## Platform Detection Strategy
 
@@ -121,17 +124,18 @@ The extension uses a resilient, multi-layered approach to detect AI chat interfa
 - `https://chat.openai.com/*`
 - `https://chatgpt.com/*`
 
+#### Claude (Anthropic)
+- `https://claude.ai/*`
+
 #### Gemini (Google)
 - `https://gemini.google.com/*`
-- `https://bard.google.com/*`
 
 #### Doubao (ByteDance)
-- `https://doubao.com/*`
-- `https://www.doubao.com/*`
-- `https://bot.doubao.com/*`
+- `https://*.doubao.com/*`
 
 #### More Coming Soon
-Additional AI platforms will be supported in future releases.
+Additional AI platforms will be supported in future releases. See `EXTENSIBILITY.md`
+for how to add one.
 
 ## Permissions
 
@@ -151,18 +155,20 @@ Additional AI platforms will be supported in future releases.
 ### Available Scripts
 ```bash
 npm run build        # Build production bundle
+npm run build:debug  # Production bundle with DEBUG logging kept
 npm run dev          # Development mode with watch
-npm run lint         # Run ESLint
 npm run type-check   # TypeScript type checking
 npm run package      # Create ZIP for distribution
 ```
+
+`npm run lint` exists in `package.json` but has no ESLint configuration file
+checked in, so it currently fails. Type checking is the enforced gate.
 
 ### Building
 The extension uses:
 - **TypeScript** for type safety
 - **React** for popup UI
 - **Webpack** for bundling
-- **ESLint** for code quality
 
 ### Type System
 - Full TypeScript support with strict mode
@@ -173,30 +179,30 @@ The extension uses:
 
 ### Basic Workflow
 1. Click extension icon to open popup
-2. Create prompt templates with variables (e.g., `{{topic}}`)
+2. Create prompt templates
 3. Visit an AI chat platform and click the floating button
-4. Select a prompt to insert (with variable values if needed)
-5. Optional: Enable auto-submit for instant execution
+4. Select a prompt — its content is inserted at the caret
+5. Review and send it yourself
+
+You can also insert straight from the popup's prompt list, which targets the
+active tab.
 
 ### Keyboard Shortcuts
-- **Ctrl+Shift+P**: Open prompt panel on AI chat pages
-- **Ctrl+Shift+U**: Toggle floating UI visibility
-- **Ctrl+Shift+L**: Quick insert last used prompt
-
-### Variables
-Use `{{variable_name}}` in prompt content to create variables. When inserting:
-1. Variables are automatically detected
-2. User can provide values for each variable
-3. Variables are replaced in the prompt content
+Not available yet. `Ctrl+Shift+P` and `Ctrl+Shift+U` are wired up in the code but
+gated behind the "Enable keyboard shortcuts" setting, which ships off and is
+disabled in the UI until the feature is finished.
 
 ## Extensibility
 
 ### Future Features
-1. **Template Library**: Community-shared prompt templates
-2. **Sync Support**: Cross-device synchronization
-3. **AI Suggestions**: Smart prompt recommendations
-4. **Formatting Tools**: Rich text formatting in prompts
-5. **More Platforms**: Additional AI chat interfaces
+1. **Variables**: `{{placeholder}}` substitution at insertion time
+2. **Auto-submit**: Optional automatic submission after insertion
+3. **Keyboard Shortcuts**: Finish and unlock the existing setting
+4. **Template Library**: Community-shared prompt templates
+5. **Sync Support**: Cross-device synchronization
+6. **AI Suggestions**: Smart prompt recommendations
+7. **Formatting Tools**: Rich text formatting in prompts
+8. **More Platforms**: Additional AI chat interfaces
 
 ### Plugin Architecture
 The modular design allows for:
@@ -216,7 +222,7 @@ The modular design allows for:
 ### Permissions
 - Minimal required permissions
 - No access to user browsing history
-- No access to ChatGPT account data
+- No access to AI platform account data
 - No tracking or analytics
 
 ### Chrome Web Store Compliance
@@ -257,15 +263,14 @@ The modular design allows for:
 4. Submit pull request
 
 ### Code Style
-- TypeScript with strict mode
-- ESLint for code quality
-- Prettier for formatting
-- Comprehensive comments
+- TypeScript with strict mode; `npm run type-check` must pass
+- Match the surrounding style — no formatter is configured
+- Comment the non-obvious, especially platform DOM workarounds
 
 ### Testing
-- Unit tests for core logic
-- Integration tests for UI components
-- Manual testing on AI chat interfaces
+There is no automated test harness yet. Changes are verified by loading the
+unpacked build and exercising it manually on each supported AI chat interface.
+Build with `npm run build:debug` to keep the `DEBUG` console logging.
 
 ## License
 

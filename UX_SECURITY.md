@@ -30,13 +30,16 @@
 - **Bulk Operations**: Multi-select for batch actions
 - **Undo Support**: Confirmation dialogs with undo options
 
-#### Variable Handling
+#### Variable Handling (planned — not implemented)
+Variables are not supported yet; prompts are inserted verbatim. When they land,
+they should follow these principles:
 - **Inline Detection**: Automatic variable extraction from prompt content
 - **Smart Defaults**: Remember previous variable values
 - **Type Validation**: Input validation based on variable type
 - **Preview Mode**: See how variables will be replaced
 
-#### Keyboard Navigation
+#### Keyboard Navigation (partly planned)
+Shortcuts are not active yet — the setting that gates them ships off and locked.
 - **Shortcut Discovery**: Tooltips showing available shortcuts
 - **Consistent Patterns**: Similar shortcuts across different views
 - **Escape Handling**: Consistent escape key behavior
@@ -182,9 +185,9 @@
 - [ ] Content Security Policy enforcement
 
 #### Testing Procedures
-- **Manual Testing**: Regular testing on ChatGPT interfaces
+- **Manual Testing**: Regular testing on every supported AI chat interface
 - **Security Scanning**: Regular code security reviews
-- **Update Validation**: Test after ChatGPT interface changes
+- **Update Validation**: Test after any supported platform changes its interface
 
 ### 7. User Education
 

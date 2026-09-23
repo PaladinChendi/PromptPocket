@@ -70,7 +70,7 @@ interface ChatSite {
 class SiteManager {
   private sites: ChatSite[] = [
     new ChatGptSite(),
-    new ClaudeSite(),      // Future
+    new ClaudeSite(),      // Shipped
     new GeminiSite(),      // Future
     new PerplexitySite()   // Future
   ];
@@ -144,7 +144,7 @@ class SiteManager {
 ### Phase 3: Platform Expansion
 
 #### 1. Additional Chat Platforms
-- **Claude (Anthropic)**: Support for claude.ai
+- **Claude (Anthropic)**: Support for claude.ai — shipped in v1.1.0
 - **Google Gemini**: Support for gemini.google.com
 - **Microsoft Copilot**: Support for copilot.microsoft.com
 - **Perplexity AI**: Support for perplexity.ai

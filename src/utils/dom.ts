@@ -72,6 +72,9 @@ export function elementExists(id: string): boolean {
 /**
  * Debounce function for performance optimization
  */
+// `any` is the standard constraint for "some function" in a generic: narrowing it
+// to unknown would reject ordinary callers.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number

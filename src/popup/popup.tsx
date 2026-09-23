@@ -1,6 +1,6 @@
 // src/popup/popup.tsx
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { PromptTemplate, Category, ExtensionSettings } from '../types';
 import { sendMessage, MessageBuilder } from '../utils/messages';

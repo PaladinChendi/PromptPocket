@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Prompt Pocket",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Create, manage, and quickly insert prompt templates for AI assistants",
-  "author": "Your Name",
+  "author": "PaladinChendi",
 
   "minimum_chrome_version": "88",
 

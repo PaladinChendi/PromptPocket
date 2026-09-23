@@ -1,6 +1,6 @@
 {
   "name": "PromptPocket",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Chrome extension for managing ChatGPT prompt templates",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
     "build:debug": "webpack --mode=production --env debug",
     "dev": "webpack --mode=development --watch",
     "dev:debug": "webpack --mode=development --watch --env debug",
-    "lint": "eslint src/**/*.{ts,tsx}",
+    "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
     "package": "npm run build && cd dist && zip -r ../promptpocket.zip ."
   },

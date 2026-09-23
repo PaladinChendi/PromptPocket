@@ -36,7 +36,7 @@ class BackgroundService {
       // Then initialize storage
       await this.storageManager.initialize();
 
-      DEBUG && console.log('ChatGPT Prompt Assistant background service initialized');
+      DEBUG && console.log('Prompt Pocket background service initialized');
       this.isInitialized = true;
     } catch (error) {
       DEBUG && console.error('Failed to initialize background service:', error);
@@ -102,8 +102,8 @@ class BackgroundService {
 
     // Create welcome prompt
     const welcomePrompt = {
-      title: 'Welcome to ChatGPT Prompt Assistant!',
-      content: 'This is your first prompt template. Edit it to create useful templates for ChatGPT.',
+      title: 'Welcome to Prompt Pocket!',
+      content: 'This is your first prompt template. Edit it to create useful templates for your AI assistant.',
       description: 'Get started with prompt templates',
       tags: ['welcome', 'tutorial']
     };
@@ -124,7 +124,7 @@ class BackgroundService {
    */
   private async handleMessage(
     message: Message,
-    sender: chrome.runtime.MessageSender
+    _sender: chrome.runtime.MessageSender
   ): Promise<MessageResponse> {
     DEBUG && console.log('Background received message:', message.type, message.payload);
 
@@ -230,7 +230,10 @@ class BackgroundService {
           const response = await chrome.tabs.sendMessage(tabId, executionMessage) as MessageResponse;
           DEBUG && console.log('FILL_PROMPT response:', response);
           return response;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
+          // The rejection can come from chrome.tabs.sendMessage or from our own
+          // throw above, so its shape is not known here.
           DEBUG && console.error('Failed to send to content script:', error);
           const errorMessage = error?.message || String(error);
           throw new Error(`Failed to execute prompt: ${errorMessage}`);
@@ -271,6 +274,9 @@ class BackgroundService {
       }
 
       default:
+        // Unreachable for a well-formed Message; the cast is only to report
+        // whatever arrived on the wire.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         throw new Error(`Unknown message type: ${(message as any).type}`);
     }
   }

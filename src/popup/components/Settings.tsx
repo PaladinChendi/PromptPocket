@@ -43,9 +43,11 @@ const Settings: React.FC<SettingsProps> = ({
               Enable keyboard shortcuts
             </div>
             <div className="settings-item-description">
-              Ctrl+Shift+P: Open panel, Ctrl+Shift+U: Toggle UI
+              Coming soon. Ctrl+Shift+P and Ctrl+Shift+U are not active yet.
             </div>
           </div>
+          {/* Shortcuts are still unfinished, so the toggle stays locked off.
+              Remove `disabled`/`readOnly` and wire up onChange once they work. */}
           <label className="switch">
             <input
               type="checkbox"

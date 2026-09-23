@@ -4,7 +4,7 @@ import { UI } from '../utils/constants';
 import { createElement, removeElement, elementExists } from '../utils/dom';
 import { sendMessage, MessageBuilder } from '../utils/messages';
 import { PlatformDetector, PlatformState } from './platforms';
-import type { PromptTemplate } from '../types';
+import type { ExtensionSettings, PromptTemplate } from '../types';
 
 /**
  * Floating UI Injection System
@@ -19,6 +19,7 @@ export class UIInjector {
   private floatingButton: HTMLElement | null = null;
   private promptPanel: HTMLElement | null = null;
   private isPanelOpen = false;
+  private shortcutsEnabled = false;
   private isDragging = false;
   private dragStartX = 0;
   private dragStartY = 0;
@@ -36,6 +37,7 @@ export class UIInjector {
     this.injectStyles();
     this.createContainer();
     this.setupEventListeners();
+    this.loadShortcutSetting();
 
     // Listen for platform state changes
     this.detector.subscribe((state) => {
@@ -252,6 +254,26 @@ export class UIInjector {
   }
 
   /**
+   * Read the keyboard-shortcut preference from storage.
+   *
+   * Shortcuts are an unfinished feature: the setting ships as false and the
+   * popup renders its toggle disabled, so this resolves to false in practice.
+   * The handler reads the flag anyway, so that the behaviour matches what the
+   * popup shows and turning the setting on is all that is needed once the
+   * feature is finished.
+   */
+  private async loadShortcutSetting(): Promise<void> {
+    try {
+      const response = await sendMessage(MessageBuilder.getSettings());
+      const settings = (response as { settings?: ExtensionSettings }).settings;
+      this.shortcutsEnabled = settings?.enableKeyboardShortcuts === true;
+    } catch (error) {
+      DEBUG && console.error('[UI Injector] Failed to load shortcut setting:', error);
+      this.shortcutsEnabled = false;
+    }
+  }
+
+  /**
    * Setup event listeners
    */
   private setupEventListeners(): void {
@@ -274,6 +296,10 @@ export class UIInjector {
    * Handle keyboard shortcuts
    */
   private handleKeyDown(event: KeyboardEvent): void {
+    if (!this.shortcutsEnabled) {
+      return;
+    }
+
     // Only handle when focused on platform input
     const inputField = this.detector.getInputField();
     if (!inputField?.contains(document.activeElement)) {

@@ -1,7 +1,7 @@
 // src/content/contentScript.ts
 
 import { PlatformDetector, PlatformState } from './platforms';
-import { getPlatformDetector, getPlatformName, getSupportedPlatforms, DetectorFactory } from './platforms/detectorFactory';
+import { getPlatformDetector, getPlatformName, getSupportedPlatforms } from './platforms/detectorFactory';
 import { UIInjector } from './uiInjector';
 import { sendMessage, MessageBuilder } from '../utils/messages';
 
@@ -124,7 +124,10 @@ class ContentScript {
   /**
    * Handle incoming messages
    */
-  private async handleMessage(message: any, sender: chrome.runtime.MessageSender) {
+  // Incoming messages are not all in the `Message` union — background also sends
+  // 'PING', which has no entry there — so the wire shape is checked by the switch.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async handleMessage(message: any, _sender: chrome.runtime.MessageSender) {
     DEBUG && console.log('[Prompt Pocket] Received message:', message.type, message.payload);
 
     // Check if we have a detector
